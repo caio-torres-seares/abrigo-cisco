@@ -27,8 +27,8 @@ const Navbar = () => {
         <Link to="/pets" className="hover:text-accent transition-colors">Pets</Link>
         <Link to="/sobre-nos" className="hover:text-accent transition-colors">Sobre Nós</Link>
         <Link to="/contribuir" className="hover:text-accent transition-colors">Contribuir</Link>
-        <Link to="/criar-conta" className="hover:text-accent transition-colors">Criar Conta</Link>
-        <Link to="/entrar" className="btn-secondary py-2 px-4">Entrar</Link>
+        <Link to="/cadastro" className="hover:text-accent transition-colors">Criar Conta</Link>
+        <Link to="/login" className="btn-secondary py-2 px-4">Entrar</Link>
       </div>
       
       {/* Mobile Menu */}
@@ -39,8 +39,8 @@ const Navbar = () => {
             <Link to="/pets" className="hover:text-accent transition-colors py-2">Pets</Link>
             <Link to="/sobre-nos" className="hover:text-accent transition-colors py-2">Sobre Nós</Link>
             <Link to="/contribuir" className="hover:text-accent transition-colors py-2">Contribuir</Link>
-            <Link to="/criar-conta" className="hover:text-accent transition-colors py-2">Criar Conta</Link>
-            <Link to="/entrar" className="btn-secondary text-center">Entrar</Link>
+            <Link to="/cadastro" className="hover:text-accent transition-colors py-2">Criar Conta</Link>
+            <Link to="/login" className="btn-secondary text-center">Entrar</Link>
           </div>
         </div>
       )}
