@@ -24,7 +24,7 @@ const Navbar = () => {
       {/* Desktop Navigation */}
       <div className="hidden md:flex items-center gap-6">
         <Link to="/" className="hover:text-accent transition-colors">Início</Link>
-        <Link to="/pets" className="hover:text-accent transition-colors">Pets</Link>
+        <Link to="/pets" className="hover:text-accent transition-colors">Procurar</Link>
         <Link to="/sobre-nos" className="hover:text-accent transition-colors">Sobre Nós</Link>
         <Link to="/contribuir" className="hover:text-accent transition-colors">Contribuir</Link>
         <Link to="/cadastro" className="hover:text-accent transition-colors">Criar Conta</Link>
@@ -36,7 +36,7 @@ const Navbar = () => {
         <div className="absolute top-16 left-0 right-0 bg-background shadow-lg border-t z-50 md:hidden">
           <div className="flex flex-col p-4 gap-4">
             <Link to="/" className="hover:text-accent transition-colors py-2">Início</Link>
-            <Link to="/pets" className="hover:text-accent transition-colors py-2">Pets</Link>
+            <Link to="/pets" className="hover:text-accent transition-colors py-2">Procurar</Link>
             <Link to="/sobre-nos" className="hover:text-accent transition-colors py-2">Sobre Nós</Link>
             <Link to="/contribuir" className="hover:text-accent transition-colors py-2">Contribuir</Link>
             <Link to="/cadastro" className="hover:text-accent transition-colors py-2">Criar Conta</Link>
