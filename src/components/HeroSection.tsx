@@ -1,13 +1,14 @@
 
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import familyImg from '../assets/images/family.jpeg'; // ajuste o caminho se estiver em subpastas
 
 const HeroSection = () => {
   return (
     <section className="w-full px-4 md:px-8 pt-6 pb-12 flex flex-col md:flex-row items-center gap-8">
       <div className="w-full md:w-1/2 flex justify-center md:justify-start">
         <img 
-          src="https://firebasestorage.googleapis.com/v0/b/lovable-assets.appspot.com/o/hero-pet-adoption.png?alt=media" 
+          src={familyImg} 
           alt="Family with pets" 
           className="w-full max-w-md rounded-xl animate-fade-in"
         />
