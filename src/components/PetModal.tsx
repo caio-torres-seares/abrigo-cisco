@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { 
   AlertDialog, 
-  AlertDialogContent, 
+  AlertDialogContent,
   AlertDialogFooter,
   AlertDialogTitle,
   AlertDialogDescription
@@ -31,10 +31,8 @@ interface PetModalProps {
 const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
   const [imageError, setImageError] = useState(false);
   
-  if (!isOpen) return null;
-  
   const handleImageError = () => {
-    console.log('Modal image failed to load');
+    console.log('Modal image failed to load for', pet.name);
     setImageError(true);
   };
   
@@ -43,11 +41,15 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
       <AlertDialogContent className="p-0 max-w-xl overflow-hidden border border-amber-200 relative">
         <AlertDialogTitle className="sr-only">Informações do Pet: {pet.name}</AlertDialogTitle>
         <AlertDialogDescription className="sr-only">
-          Informações básicas sobre {pet.name}, incluindo idade, raça e características.
+          Detalhes completos sobre {pet.name}, incluindo idade, raça e características.
         </AlertDialogDescription>
         
+        {/* Botão de fechar no canto superior direito */}
         <button 
-          onClick={onClose}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
           className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm rounded-full p-1 z-10"
           aria-label="Fechar"
         >
@@ -60,13 +62,13 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
             {!imageError ? (
               <img 
                 src={pet.image} 
-                alt={pet.name} 
+                alt={`Foto de ${pet.name}`}
                 className="w-full object-cover rounded-md max-h-80"
                 onError={handleImageError}
               />
             ) : (
               <div className="w-full h-64 flex items-center justify-center">
-                <ImageOff className="h-16 w-16 text-gray-400" />
+                <ImageOff className="h-16 w-16 text-gray-500" />
               </div>
             )}
           </div>
@@ -75,12 +77,12 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
           <div className="p-6 flex flex-col">
             <div className="mb-3">
               <h2 className="text-2xl font-bold">{pet.name}</h2>
-              <p className="text-sm text-gray-500">Último Atualizacao: 8 de Abril de 2023</p>
+              <p className="text-sm text-gray-500">Último Atualização: 11 de Abril de 2025</p>
             </div>
             
             {/* Badges de personalidade */}
             <div className="flex flex-wrap gap-1 mb-3">
-              {pet.personality ? (
+              {pet.personality && pet.personality.length > 0 ? (
                 pet.personality.map((trait, index) => (
                   <Badge key={index} className="bg-amber-100 text-amber-800 hover:bg-amber-200">{trait}</Badge>
                 ))
@@ -88,28 +90,32 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
                 <>
                   <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200">Amigável</Badge>
                   <Badge className="bg-pink-100 text-pink-800 hover:bg-pink-200">Brincalhão</Badge>
-                  <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-200">Calmo</Badge>
                 </>
               )}
             </div>
             
             {/* Descrição */}
             <p className="text-sm mb-4">
-              {pet.name} é um cachorrinho lindo, carinhoso, mas também muito curioso. Ele está pronto para encher um lar com muita alegria, ternura e amor!
+              {pet.name} é um {pet.type === 'cachorro' ? 'cachorro' : 'gato'} {pet.breed} {pet.gender === 'Macho' ? 'carinhoso' : 'carinhosa'} e 
+              sociável. {pet.gender === 'Macho' ? 'Ele' : 'Ela'} está pronto para encontrar um novo lar cheio de amor e carinho!
             </p>
             
-            {/* Características */}
+            {/* Características em badges */}
             <div className="flex flex-wrap gap-2 mb-6">
               <Badge className="rounded-full px-4 py-1 bg-red-500 text-white">{pet.gender || 'Macho'}</Badge>
               <Badge className="rounded-full px-4 py-1 bg-orange-300 text-white">{pet.age}</Badge>
               <Badge className="rounded-full px-4 py-1 bg-purple-400 text-white">{pet.weight || '7kg'}</Badge>
             </div>
             
+            {/* Botões de ação */}
             <AlertDialogFooter className="sm:justify-between p-0">
               <Button 
                 variant="secondary" 
                 className="bg-amber-100 hover:bg-amber-200 text-amber-800"
-                onClick={onClose}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
               >
                 Fechar
               </Button>
