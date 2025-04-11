@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
@@ -8,20 +7,25 @@ const Navbar = () => {
 
   return (
     <nav className="w-full py-4 px-4 md:px-8 flex justify-between items-center">
-      <div className="flex items-center gap-2">
-        <img src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png" alt="Logo" className="w-6 h-6" />
+      {/* Logo + Nome do Site como link */}
+      <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
+        <img
+          src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png"
+          alt="Logo"
+          className="w-6 h-6"
+        />
         <span className="font-medium text-lg">Abrigo Cisco</span>
-      </div>
-      
-      {/* Mobile Menu Button */}
+      </Link>
+
+      {/* Botão do menu mobile */}
       <button 
         className="md:hidden"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
-      
-      {/* Desktop Navigation */}
+
+      {/* Navegação para desktop */}
       <div className="hidden md:flex items-center gap-6">
         <Link to="/" className="hover:text-accent transition-colors">Início</Link>
         <Link to="/pets" className="hover:text-accent transition-colors">Procurar</Link>
@@ -30,8 +34,8 @@ const Navbar = () => {
         <Link to="/cadastro" className="hover:text-accent transition-colors">Criar Conta</Link>
         <Link to="/login" className="btn-secondary py-2 px-4">Entrar</Link>
       </div>
-      
-      {/* Mobile Menu */}
+
+      {/* Menu mobile */}
       {isMenuOpen && (
         <div className="absolute top-16 left-0 right-0 bg-background shadow-lg border-t z-50 md:hidden">
           <div className="flex flex-col p-4 gap-4">

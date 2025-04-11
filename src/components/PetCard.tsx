@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import { ImageOff } from 'lucide-react';
 import PetModal from './PetModal';
-import dogImage from '../assets/images/family.jpeg'; // ajuste o caminho se estiver em subpastas
-
 
 interface PetCardProps {
   id: number;
