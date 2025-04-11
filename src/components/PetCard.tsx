@@ -1,17 +1,24 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { X } from 'lucide-react';
+import PetModal from './PetModal';
 
 interface PetCardProps {
+  id: number;
   name: string;
   age: string;
   breed: string;
   image: string;
   type: string;
+  personality?: string[];
+  gender?: string;
+  weight?: string;
 }
 
-const PetCard = ({ name, age, breed, image, type }: PetCardProps) => {
+const PetCard = ({ id, name, age, breed, image, type, personality, gender, weight }: PetCardProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Define a cor de fundo baseada no tipo de animal
   const getBgColor = () => {
     const colors = [
@@ -27,30 +34,59 @@ const PetCard = ({ name, age, breed, image, type }: PetCardProps) => {
     return colors[index];
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Verificar se o clique não foi no botão X
+    if (!(e.target instanceof SVGElement || (e.target as HTMLElement).closest('button'))) {
+      setIsModalOpen(true);
+    }
+  };
+
   return (
-    <div className="relative rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md">
-      <div className={`relative ${getBgColor()} pb-[100%]`}>
-        <img 
-          src={image} 
-          alt={name} 
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <button 
-          className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm rounded-full p-1"
-          aria-label="Fechar"
-        >
-          <X className="h-4 w-4 text-gray-700" />
-        </button>
-      </div>
-      
-      <div className="p-4 bg-white">
-        <h3 className="font-medium text-lg">{name}</h3>
-        <div className="flex flex-col text-sm text-gray-600">
-          <span>{breed}</span>
-          <span>{age}</span>
+    <>
+      <div 
+        className="relative rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md cursor-pointer"
+        onClick={handleCardClick}
+      >
+        <div className={`relative ${getBgColor()} pb-[100%]`}>
+          <img 
+            src={image} 
+            alt={name} 
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <button 
+            className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm rounded-full p-1"
+            aria-label="Fechar"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <X className="h-4 w-4 text-gray-700" />
+          </button>
+        </div>
+        
+        <div className="p-4 bg-white">
+          <h3 className="font-medium text-lg">{name}</h3>
+          <div className="flex flex-col text-sm text-gray-600">
+            <span>{breed}</span>
+            <span>{age}</span>
+          </div>
         </div>
       </div>
-    </div>
+
+      <PetModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        pet={{ 
+          id, 
+          name, 
+          age, 
+          breed, 
+          type, 
+          image,
+          personality,
+          gender,
+          weight
+        }} 
+      />
+    </>
   );
 };
 

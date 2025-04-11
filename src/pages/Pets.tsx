@@ -3,29 +3,127 @@ import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import PetCard from '@/components/PetCard';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink } from '@/components/ui/pagination';
 
 const Pets = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [animalType, setAnimalType] = useState<string | undefined>('todos');
   
-  // Dados simulados dos pets
+  // Dados simulados dos pets com mais informações
   const pets = [
-    { id: 1, name: 'Jujuba', age: '3 anos', breed: 'Yorkshire Terrier', type: 'cachorro', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 2, name: 'Laranjinha', age: '1 ano', breed: 'Half-breed', type: 'gato', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 3, name: 'Cleber', age: '2 anos', breed: 'Vira-lata', type: 'cachorro', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 4, name: 'Juninho', age: '2 months', breed: 'British Longhair', type: 'gato', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 5, name: 'Costellinha', age: '1 ano', breed: 'Jack Russell Terrier', type: 'cachorro', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 6, name: 'Mingau', age: '4 anos', breed: 'Maine Coon', type: 'gato', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 7, name: 'Chavina', age: '2 anos', breed: 'Welsh Corgi', type: 'cachorro', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 8, name: 'Kiwi', age: '1 ano', breed: 'Yorkshire Terrier', type: 'cachorro', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 9, name: 'Juca', age: '3 anos', breed: 'Samoyed', type: 'cachorro', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
-    { id: 10, name: 'Stitch', age: '2 anos', breed: 'European cat', type: 'gato', image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png' },
+    { 
+      id: 1, 
+      name: 'Jujuba', 
+      age: '3 anos', 
+      breed: 'Yorkshire Terrier', 
+      type: 'cachorro', 
+      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
+      personality: ['Amigável', 'Brincalhão', 'Calmo'],
+      gender: 'Fêmea',
+      weight: '3kg'
+    },
+    { 
+      id: 2, 
+      name: 'Laranjinha', 
+      age: '1 ano', 
+      breed: 'Half-breed', 
+      type: 'gato', 
+      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
+      personality: ['Independente', 'Curioso', 'Tranquilo'],
+      gender: 'Macho',
+      weight: '4kg'
+    },
+    { 
+      id: 3, 
+      name: 'Clebin', 
+      age: '2 anos', 
+      breed: 'Vira-lata', 
+      type: 'cachorro', 
+      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
+      personality: ['Amigável', 'Brincalhão', 'Calmo'],
+      gender: 'Macho',
+      weight: '7kg'
+    },
+    { 
+      id: 4, 
+      name: 'Juninho', 
+      age: '2 meses', 
+      breed: 'British Longhair', 
+      type: 'gato', 
+      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
+      personality: ['Brincalhão', 'Enérgico', 'Social'],
+      gender: 'Macho',
+      weight: '1kg'
+    },
+    { 
+      id: 5, 
+      name: 'Costellinha', 
+      age: '1 ano', 
+      breed: 'Jack Russell Terrier', 
+      type: 'cachorro', 
+      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
+      personality: ['Ativo', 'Inteligente', 'Leal'],
+      gender: 'Macho',
+      weight: '6kg'
+    },
+    { 
+      id: 6, 
+      name: 'Mingau', 
+      age: '4 anos', 
+      breed: 'Maine Coon', 
+      type: 'gato', 
+      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
+      personality: ['Gentil', 'Tranquilo', 'Carinhoso'],
+      gender: 'Fêmea',
+      weight: '5kg'
+    },
+    { 
+      id: 7, 
+      name: 'Chavina', 
+      age: '2 anos', 
+      breed: 'Welsh Corgi', 
+      type: 'cachorro', 
+      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
+      personality: ['Esperto', 'Brincalhão', 'Sociável'],
+      gender: 'Fêmea',
+      weight: '8kg'
+    },
+    { 
+      id: 8, 
+      name: 'Kiwi', 
+      age: '1 ano', 
+      breed: 'Yorkshire Terrier', 
+      type: 'cachorro', 
+      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
+      personality: ['Doce', 'Afetuoso', 'Tímido'],
+      gender: 'Fêmea',
+      weight: '2kg'
+    },
+    { 
+      id: 9, 
+      name: 'Juca', 
+      age: '3 anos', 
+      breed: 'Samoyed', 
+      type: 'cachorro', 
+      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
+      personality: ['Feliz', 'Amigável', 'Sociável'],
+      gender: 'Macho',
+      weight: '10kg'
+    },
+    { 
+      id: 10, 
+      name: 'Stitch', 
+      age: '2 anos', 
+      breed: 'European cat', 
+      type: 'gato', 
+      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
+      personality: ['Independente', 'Carinhoso', 'Calmo'],
+      gender: 'Macho',
+      weight: '4kg'
+    },
   ];
 
   // Filtrando os pets com base no termo de busca e tipo de animal
@@ -83,11 +181,15 @@ const Pets = () => {
           {filteredPets.map((pet) => (
             <PetCard 
               key={pet.id} 
+              id={pet.id}
               name={pet.name} 
               age={pet.age} 
               breed={pet.breed} 
               image={pet.image}
               type={pet.type}
+              personality={pet.personality}
+              gender={pet.gender}
+              weight={pet.weight}
             />
           ))}
         </div>
