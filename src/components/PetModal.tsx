@@ -37,8 +37,8 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="max-w-3xl p-0 overflow-hidden border border-yellow-300 shadow-xl bg-white rounded-2xl">
-        {/* Fechar */}
+      <AlertDialogContent className="max-w-3xl w-full p-0 border border-yellow-300 shadow-xl bg-white rounded-2xl overflow-y-auto max-h-[90vh]">
+        {/* Botão Fechar */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -50,14 +50,15 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
           <X className="h-5 w-5 text-gray-700" />
         </button>
 
-        <div className="grid md:grid-cols-2 grid-cols-1">
+        {/* Layout Responsivo */}
+        <div className="flex flex-col md:flex-row">
           {/* Imagem */}
-          <div className="bg-yellow-100 flex justify-center items-center p-6">
+          <div className="bg-yellow-100 flex justify-center items-center p-4 md:w-1/2 w-full">
             {!imageError ? (
               <img
                 src={pet.image}
                 alt={`Foto de ${pet.name}`}
-                className="w-full h-80 object-cover rounded-lg shadow-inner"
+                className="w-full max-h-80 object-cover rounded-lg shadow-inner"
                 onError={handleImageError}
               />
             ) : (
@@ -68,23 +69,26 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
           </div>
 
           {/* Conteúdo */}
-          <div className="p-6 flex flex-col justify-between">
+          <div className="p-6 flex flex-col justify-between md:w-1/2 w-full">
             <div>
               <div className="mb-2">
                 <h2 className="text-2xl font-bold text-gray-800">{pet.name}</h2>
                 <p className="text-xs text-gray-500">Última atualização: 11 de Abril de 2025</p>
               </div>
 
+              {/* Personalidade */}
               <div className="flex flex-wrap gap-2 my-3">
-                {(pet.personality && pet.personality.length > 0 ? pet.personality : ['Amigável', 'Brincalhão']).map((trait, index) => (
+                {(pet.personality?.length ? pet.personality : ['Amigável', 'Brincalhão']).map((trait, index) => (
                   <Badge key={index} className="bg-yellow-200 text-yellow-900 hover:bg-yellow-300 transition">{trait}</Badge>
                 ))}
               </div>
 
+              {/* Descrição */}
               <p className="text-sm text-gray-700 mb-4 leading-relaxed">
                 {pet.name} é um {pet.type === 'cachorro' ? 'cachorro' : 'gato'} {pet.breed} {pet.gender === 'Macho' ? 'carinhoso' : 'carinhosa'} e sociável. {pet.gender === 'Macho' ? 'Ele' : 'Ela'} está pronto(a) para encontrar um novo lar cheio de amor e cuidado.
               </p>
 
+              {/* Infos extras */}
               <div className="flex flex-wrap gap-3 mb-4">
                 <Badge className="rounded-full px-4 py-1 bg-red-500 text-white">{pet.gender || 'Macho'}</Badge>
                 <Badge className="rounded-full px-4 py-1 bg-orange-300 text-white">{pet.age}</Badge>
@@ -92,10 +96,11 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
               </div>
             </div>
 
-            <AlertDialogFooter className="mt-4 justify-between p-0">
+            {/* Rodapé (botões) */}
+            <AlertDialogFooter className="mt-4 flex flex-col sm:flex-row gap-2 p-0">
               <Button
                 variant="ghost"
-                className="text-yellow-800 hover:bg-yellow-100"
+                className="text-yellow-800 hover:bg-yellow-100 w-full sm:w-auto"
                 onClick={(e) => {
                   e.stopPropagation();
                   onClose();
@@ -103,8 +108,8 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
               >
                 Fechar
               </Button>
-              <Link to={`/pets/${pet.id}`}>
-                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white">
+              <Link to={`/pets/${pet.id}`} className="w-full sm:w-auto">
+                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white w-full sm:w-auto">
                   Ver mais
                 </Button>
               </Link>
@@ -112,6 +117,7 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
           </div>
         </div>
       </AlertDialogContent>
+
     </AlertDialog>
   );
 };
