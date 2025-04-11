@@ -98,16 +98,6 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
 
             {/* Rodapé (botões) */}
             <AlertDialogFooter className="mt-4 flex flex-col sm:flex-row gap-2 p-0">
-              <Button
-                variant="ghost"
-                className="text-yellow-800 hover:bg-yellow-100 w-full sm:w-auto"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onClose();
-                }}
-              >
-                Fechar
-              </Button>
               <Link to={`/pets/${pet.id}`} className="w-full sm:w-auto">
                 <Button className="bg-yellow-500 hover:bg-yellow-600 text-white w-full sm:w-auto">
                   Ver mais
