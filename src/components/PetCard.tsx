@@ -56,7 +56,10 @@ const PetCard = ({ id, name, age, breed, image, type, personality, gender, weigh
           <button 
             className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm rounded-full p-1"
             aria-label="Fechar"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              // Adicione qualquer ação para o botão X aqui se necessário
+            }}
           >
             <X className="h-4 w-4 text-gray-700" />
           </button>

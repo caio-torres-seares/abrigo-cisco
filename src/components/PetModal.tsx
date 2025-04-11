@@ -3,7 +3,9 @@ import React from 'react';
 import { 
   AlertDialog, 
   AlertDialogContent, 
-  AlertDialogFooter
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +32,11 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="p-0 max-w-xl overflow-hidden border border-amber-200 relative">
+        <AlertDialogTitle className="sr-only">Informações do Pet: {pet.name}</AlertDialogTitle>
+        <AlertDialogDescription className="sr-only">
+          Informações básicas sobre {pet.name}, incluindo idade, raça e características.
+        </AlertDialogDescription>
+        
         <button 
           onClick={onClose}
           className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm rounded-full p-1 z-10"
