@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { X } from 'lucide-react';
+import { X, ImageOff } from 'lucide-react';
 import PetModal from './PetModal';
 
 interface PetCardProps {
@@ -18,6 +18,7 @@ interface PetCardProps {
 
 const PetCard = ({ id, name, age, breed, image, type, personality, gender, weight }: PetCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // Define a cor de fundo baseada no tipo de animal
   const getBgColor = () => {
@@ -39,6 +40,11 @@ const PetCard = ({ id, name, age, breed, image, type, personality, gender, weigh
     setIsModalOpen(true);
   };
 
+  const handleImageError = () => {
+    console.log('Image failed to load');
+    setImageError(true);
+  };
+
   return (
     <>
       <div 
@@ -46,11 +52,18 @@ const PetCard = ({ id, name, age, breed, image, type, personality, gender, weigh
         onClick={handleCardClick}
       >
         <div className={`relative ${getBgColor()} pb-[100%]`}>
-          <img 
-            src={image} 
-            alt={name} 
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          {!imageError ? (
+            <img 
+              src={image} 
+              alt={name} 
+              className="absolute inset-0 w-full h-full object-cover"
+              onError={handleImageError}
+            />
+          ) : (
+            <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+              <ImageOff className="h-12 w-12 text-gray-400" />
+            </div>
+          )}
           <button 
             className="absolute top-2 right-2 bg-white/30 backdrop-blur-sm rounded-full p-1"
             aria-label="Fechar"

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   AlertDialog, 
   AlertDialogContent, 
@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
+import { X, ImageOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface PetModalProps {
@@ -29,7 +29,14 @@ interface PetModalProps {
 }
 
 const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
+  const [imageError, setImageError] = useState(false);
+  
   if (!isOpen) return null;
+  
+  const handleImageError = () => {
+    console.log('Modal image failed to load');
+    setImageError(true);
+  };
   
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -50,11 +57,18 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-0">
           {/* Imagem (lado esquerdo) */}
           <div className="bg-amber-200 flex justify-center items-center p-6">
-            <img 
-              src={pet.image} 
-              alt={pet.name} 
-              className="w-full object-cover rounded-md max-h-80"
-            />
+            {!imageError ? (
+              <img 
+                src={pet.image} 
+                alt={pet.name} 
+                className="w-full object-cover rounded-md max-h-80"
+                onError={handleImageError}
+              />
+            ) : (
+              <div className="w-full h-64 flex items-center justify-center">
+                <ImageOff className="h-16 w-16 text-gray-400" />
+              </div>
+            )}
           </div>
           
           {/* Informações (lado direito) */}
