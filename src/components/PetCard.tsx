@@ -34,11 +34,9 @@ const PetCard = ({ id, name, age, breed, image, type, personality, gender, weigh
     return colors[index];
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Verificar se o clique não foi no botão X
-    if (!(e.target instanceof SVGElement || (e.target as HTMLElement).closest('button'))) {
-      setIsModalOpen(true);
-    }
+  const handleCardClick = () => {
+    console.log('Card clicked, opening modal');
+    setIsModalOpen(true);
   };
 
   return (

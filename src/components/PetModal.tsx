@@ -29,6 +29,8 @@ interface PetModalProps {
 }
 
 const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
+  if (!isOpen) return null;
+  
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="p-0 max-w-xl overflow-hidden border border-amber-200 relative">
