@@ -1,19 +1,26 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 const Login = () => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // Implemente a lógica de login aqui
-    console.log('Login com:', email, password);
+    // TODO: Implementar a lógica real de autenticação
+    // Por enquanto, vamos simular um login
+    const isEmployee = email.includes('@abrigocisco.com');
+    
+    if (isEmployee) {
+      navigate('/funcionario');
+    } else {
+      navigate('/pets');
+    }
   };
 
   return (
