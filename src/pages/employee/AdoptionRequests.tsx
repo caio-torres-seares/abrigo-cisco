@@ -78,7 +78,7 @@ const AdoptionRequests = () => {
                   <TableHead>Nome do Pet</TableHead>
                   <TableHead>ID do Pet</TableHead>
                   <TableHead className="w-[180px]">Data e Hora da Solicitação</TableHead>
-                  <TableHead className="text-right">Ação</TableHead>
+                  <TableHead className="text-right"></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
