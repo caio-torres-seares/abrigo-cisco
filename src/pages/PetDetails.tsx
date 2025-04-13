@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
@@ -81,7 +80,7 @@ const PetDetails = () => {
                     <Badge 
                       key={index} 
                       className={`
-                        ${index === 0 ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-200' : ''}
+                        ${index === 0 ? 'bg-primary-light text-primary hover:bg-primary' : ''}
                         ${index === 1 ? 'bg-orange-100 text-orange-800 hover:bg-orange-200' : ''}
                         ${index === 2 ? 'bg-pink-100 text-pink-800 hover:bg-pink-200' : ''}
                       `}

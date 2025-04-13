@@ -37,7 +37,7 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
 
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <AlertDialogContent className="max-w-3xl w-full p-0 border border-yellow-300 shadow-xl bg-white rounded-2xl overflow-y-auto max-h-[90vh]">
+      <AlertDialogContent className="max-w-3xl w-full p-0 border border-primary shadow-xl bg-white rounded-2xl overflow-y-auto max-h-[90vh]">
         {/* Botão Fechar */}
         <button
           onClick={(e) => {
@@ -53,7 +53,7 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
         {/* Layout Responsivo */}
         <div className="flex flex-col md:flex-row">
           {/* Imagem */}
-          <div className="bg-yellow-100 flex justify-center items-center p-4 md:w-1/2 w-full">
+          <div className="bg-primary-light flex justify-center items-center p-4 md:w-1/2 w-full">
             {!imageError ? (
               <img
                 src={pet.image}
@@ -79,7 +79,7 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
               {/* Personalidade */}
               <div className="flex flex-wrap gap-2 my-3">
                 {(pet.personality?.length ? pet.personality : ['Amigável', 'Brincalhão']).map((trait, index) => (
-                  <Badge key={index} className="bg-yellow-200 text-yellow-900 hover:bg-yellow-300 transition">{trait}</Badge>
+                  <Badge key={index} className="bg-primary-light text-primary hover:bg-primary transition">{trait}</Badge>
                 ))}
               </div>
 
@@ -99,7 +99,7 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
             {/* Rodapé (botões) */}
             <AlertDialogFooter className="mt-4 flex flex-col sm:flex-row gap-2 p-0">
               <Link to={`/pets/${pet.id}`} className="w-full sm:w-auto">
-                <Button className="bg-yellow-500 hover:bg-yellow-600 text-white w-full sm:w-auto">
+                <Button className="bg-primary hover:bg-primary-dark text-primary-text w-full sm:w-auto">
                   Ver mais
                 </Button>
               </Link>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -98,7 +97,7 @@ const EditPet = () => {
                 <div>
                   <Label>Personalidade do Pet *</Label>
                   <div className="mt-2 grid grid-cols-2 gap-2">
-                    <div className="rounded-lg bg-yellow-100 w-12 h-12"></div>
+                    <div className="rounded-lg bg-primary-light w-12 h-12"></div>
                     <div className="rounded-lg bg-red-100 w-12 h-12"></div>
                   </div>
                   <button
