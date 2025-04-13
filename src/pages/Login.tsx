@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implementar a lógica real de autenticação
-    // Por enquanto, vamos simular um login
-    const isEmployee = email.includes('@abrigocisco.com');
-    
-    if (isEmployee) {
-      navigate('/funcionario');
-    } else {
-      navigate('/pets');
+    try {
+      await login(email, password);
+      // Redireciona para a página que o usuário tentou acessar ou para a página inicial
+      const from = location.state?.from?.pathname || '/';
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+      // TODO: Mostrar mensagem de erro para o usuário
     }
   };
 
