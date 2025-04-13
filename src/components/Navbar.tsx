@@ -1,9 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User, Settings } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const { isAuthenticated, user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
+  };
 
   return (
     <nav className="w-full py-4 px-4 md:px-8 flex justify-between items-center">
@@ -31,8 +44,35 @@ const Navbar = () => {
         <Link to="/pets" className="hover:text-accent transition-colors">Procurar</Link>
         <Link to="/sobre-nos" className="hover:text-accent transition-colors">Sobre Nós</Link>
         <Link to="/contribuir" className="hover:text-accent transition-colors">Contribuir</Link>
-        <Link to="/cadastro" className="hover:text-accent transition-colors">Criar Conta</Link>
-        <Link to="/login" className="btn-secondary py-2 px-4">Entrar</Link>
+        {isAuthenticated ? (
+          <>
+            {user?.isEmployee && (
+              <Link 
+                to="/funcionario" 
+                className="flex items-center gap-2 hover:text-accent transition-colors"
+              >
+                <Settings size={20} />
+                Área do Funcionário
+              </Link>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 hover:text-accent transition-colors">
+                <User size={20} />
+                <span>{user?.name}</span>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={handleLogout}>
+                  Sair
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
+        ) : (
+          <>
+            <Link to="/cadastro" className="hover:text-accent transition-colors">Criar Conta</Link>
+            <Link to="/login" className="btn-secondary py-2 px-4">Entrar</Link>
+          </>
+        )}
       </div>
 
       {/* Menu mobile */}
@@ -43,8 +83,34 @@ const Navbar = () => {
             <Link to="/pets" className="hover:text-accent transition-colors py-2">Procurar</Link>
             <Link to="/sobre-nos" className="hover:text-accent transition-colors py-2">Sobre Nós</Link>
             <Link to="/contribuir" className="hover:text-accent transition-colors py-2">Contribuir</Link>
-            <Link to="/cadastro" className="hover:text-accent transition-colors py-2">Criar Conta</Link>
-            <Link to="/login" className="btn-secondary text-center">Entrar</Link>
+            {isAuthenticated ? (
+              <>
+                {user?.isEmployee && (
+                  <Link 
+                    to="/funcionario" 
+                    className="flex items-center gap-2 hover:text-accent transition-colors py-2"
+                  >
+                    <Settings size={20} />
+                    Área do Funcionário
+                  </Link>
+                )}
+                <div className="flex items-center gap-2 py-2">
+                  <User size={20} />
+                  <span>{user?.name}</span>
+                </div>
+                <button 
+                  onClick={handleLogout}
+                  className="text-left hover:text-accent transition-colors py-2"
+                >
+                  Sair
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/cadastro" className="hover:text-accent transition-colors py-2">Criar Conta</Link>
+                <Link to="/login" className="btn-secondary text-center">Entrar</Link>
+              </>
+            )}
           </div>
         </div>
       )}
