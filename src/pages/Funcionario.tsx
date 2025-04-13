@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Users, FileText, Settings } from 'lucide-react';
@@ -78,4 +79,4 @@ const Funcionario = () => {
   );
 };
 
-export default Funcionario; 
+export default Funcionario;

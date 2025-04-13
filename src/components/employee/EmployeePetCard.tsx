@@ -29,7 +29,7 @@ const EmployeePetCard: React.FC<EmployeePetCardProps> = ({
 
   return (
     <Card className="overflow-hidden h-full">
-      <div className="relative bg-amber-100 aspect-square">
+      <div className="relative bg-primary-light aspect-square">
         {!imageError ? (
           <img
             src={image}
@@ -38,8 +38,8 @@ const EmployeePetCard: React.FC<EmployeePetCardProps> = ({
             onError={handleImageError}
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center bg-amber-100">
-            <ImageOff className="h-10 w-10 text-amber-300" />
+          <div className="w-full h-full flex items-center justify-center bg-primary-light">
+            <ImageOff className="h-10 w-10 text-primary" />
           </div>
         )}
       </div>
@@ -53,7 +53,7 @@ const EmployeePetCard: React.FC<EmployeePetCardProps> = ({
       <div className="flex border-t border-gray-100">
         <button 
           onClick={onEditClick}
-          className="flex-1 p-2 hover:bg-amber-100 flex items-center justify-center gap-1 text-sm"
+          className="flex-1 p-2 hover:bg-primary-light flex items-center justify-center gap-1 text-sm"
         >
           <Edit size={16} />
           <span>Editar</span>
