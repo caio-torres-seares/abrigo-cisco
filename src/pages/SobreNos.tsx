@@ -7,9 +7,6 @@ import Footer from '@/components/Footer';
 const SobreNos = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 bg-background/90 backdrop-blur-md z-50 shadow-sm">
-        <Navbar />
-      </header>
       
       <main className="flex-grow bg-background py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
@@ -60,7 +57,6 @@ const SobreNos = () => {
         </div>
       </main>
 
-      <Footer />
     </div>
   );
 };

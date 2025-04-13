@@ -141,7 +141,7 @@ const Pets = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      {/* <Navbar /> */}
       
       <main className="flex-grow px-4 md:px-8 py-8 max-w-7xl mx-auto w-full">
         <div className="mb-8 md:mb-12">
@@ -201,7 +201,7 @@ const Pets = () => {
         </div>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

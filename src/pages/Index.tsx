@@ -8,16 +8,12 @@ import Footer from '../components/Footer';
 const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="sticky top-0 bg-background/90 backdrop-blur-md z-50 shadow-sm">
-        <Navbar />
-      </header>
       
       <main className="flex-grow">
         <HeroSection />
         <SearchSection />
       </main>
       
-      <Footer />
     </div>
   );
 };
