@@ -1,69 +1,85 @@
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { authService } from '@/services/authService';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  address?: string;
   isEmployee: boolean;
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
+  isEmployee: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (name: string, email: string, password: string, phone?: string, address?: string) => Promise<void>;
   logout: () => void;
+  loading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Verificar se há um usuário logado ao carregar a página
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      setIsAuthenticated(true);
-    }
+    loadUser();
   }, []);
 
-  const login = async (email: string, password: string) => {
-    // TODO: Implementar chamada real à API
-    // Por enquanto, vamos simular um login
-    const isEmployee = email.includes('@abrigocisco.com');
-    
-    const mockUser: User = {
-      id: '1',
-      name: isEmployee ? 'Funcionário' : 'Usuário',
-      email,
-      isEmployee
-    };
+  async function loadUser() {
+    try {
+      if (authService.isAuthenticated()) {
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar usuário:', error);
+      authService.logout();
+    } finally {
+      setLoading(false);
+    }
+  }
 
-    setUser(mockUser);
-    setIsAuthenticated(true);
-    localStorage.setItem('user', JSON.stringify(mockUser));
-  };
+  async function login(email: string, password: string) {
+    const { user } = await authService.login({ email, password });
+    setUser(user);
+  }
 
-  const logout = () => {
+  async function register(name: string, email: string, password: string, phone?: string, address?: string) {
+    const { user } = await authService.register({ name, email, password, phone, address });
+    setUser(user);
+  }
+
+  function logout() {
+    authService.logout();
     setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('user');
-  };
+  }
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, login, logout }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAuthenticated: !!user,
+        isEmployee: user?.isEmployee || false,
+        login,
+        register,
+        logout,
+        loading
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth deve ser usado dentro de um AuthProvider');
   }
   return context;
-};
+}

@@ -7,13 +7,16 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-export function Login() {
+export function Register() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,10 +24,10 @@ export function Login() {
     setLoading(true);
 
     try {
-      await login(email, password);
+      await register(name, email, password, phone, address);
       navigate('/pets');
     } catch (error) {
-      setError('Email ou senha inválidos');
+      setError('Erro ao criar conta. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -34,9 +37,9 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Criar Conta</CardTitle>
           <CardDescription className="text-center">
-            Entre com suas credenciais para acessar sua conta
+            Preencha os dados para criar sua conta
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -46,6 +49,16 @@ export function Login() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
+            <div className="space-y-2">
+              <Label htmlFor="name">Nome</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Seu nome completo"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -68,19 +81,37 @@ export function Login() {
                 placeholder="Sua senha"
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="phone">Telefone (opcional)</Label>
+              <Input
+                id="phone"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="(00) 00000-0000"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="address">Endereço (opcional)</Label>
+              <Input
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Seu endereço completo"
+              />
+            </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Criando conta...' : 'Criar Conta'}
             </Button>
             <div className="text-center text-sm">
-              Não tem uma conta?{' '}
+              Já tem uma conta?{' '}
               <Button
                 variant="link"
                 className="p-0"
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/login')}
               >
-                Registre-se
+                Faça login
               </Button>
             </div>
           </CardFooter>
@@ -88,4 +119,4 @@ export function Login() {
       </Card>
     </div>
   );
-}
+} 

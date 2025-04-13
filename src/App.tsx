@@ -1,95 +1,67 @@
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import Home from '@/pages/Home';
+import { Login } from './pages/Login';
+import { Register } from './pages/Register';
+import Pets from '@/pages/Pets';
+import About from '@/pages/About';
+import Contribute from '@/pages/Contribute';
+import Funcionario from '@/pages/Funcionario';
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { AuthProvider } from "@/contexts/AuthContext";
-import { ProfileProvider } from "@/contexts/ProfileContext";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import Cadastro from "./pages/Cadastro";
-import Pets from "./pages/Pets";
-import PetDetails from "./pages/PetDetails";
-import SobreNos from "./pages/SobreNos";
-import ProfileForm from "./pages/ProfileForm";
-import UserRequests from "./pages/UserRequests";
+// Componente para rotas protegidas
+function ProtectedRoute({ children, requireEmployee = false }: { children: React.ReactNode; requireEmployee?: boolean }) {
+  const { isAuthenticated, isEmployee, loading } = useAuth();
 
-// Employee pages
-import EmployeePets from "./pages/employee/EmployeePets";
-import EditPet from "./pages/employee/EditPet";
-import RegisterPet from "./pages/employee/RegisterPet";
-import AdoptionRequests from "./pages/employee/AdoptionRequests";
-import Settings from "./pages/employee/Settings";
+  if (loading) {
+    return <div>Carregando...</div>;
+  }
 
-const queryClient = new QueryClient();
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ProfileProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/cadastro" element={<Cadastro />} />
-              <Route path="/pets" element={<Pets />} />
-              <Route path="/pets/:id" element={<PetDetails />} />
-              <Route path="/sobre-nos" element={<SobreNos />} />
-              
-              {/* Protected user routes */}
-              <Route path="/perfil" element={
-                <ProtectedRoute>
-                  <ProfileForm />
-                </ProtectedRoute>
-              } />
-              <Route path="/solicitacoes" element={
-                <ProtectedRoute>
-                  <UserRequests />
-                </ProtectedRoute>
-              } />
-              
-              {/* Protected employee routes */}
-              <Route path="/funcionario" element={
-                <ProtectedRoute requireEmployee>
-                  <EmployeePets />
-                </ProtectedRoute>
-              } />
-              <Route path="/funcionario/editar-pet/:id" element={
-                <ProtectedRoute requireEmployee>
-                  <EditPet />
-                </ProtectedRoute>
-              } />
-              <Route path="/funcionario/cadastrar-pet" element={
-                <ProtectedRoute requireEmployee>
-                  <RegisterPet />
-                </ProtectedRoute>
-              } />
-              <Route path="/funcionario/solicitacoes" element={
-                <ProtectedRoute requireEmployee>
-                  <AdoptionRequests />
-                </ProtectedRoute>
-              } />
-              <Route path="/funcionario/configuracoes" element={
-                <ProtectedRoute requireEmployee>
-                  <Settings />
-                </ProtectedRoute>
-              } />
-              
-              {/* Catch-all route */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ProfileProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+  if (requireEmployee && !isEmployee) {
+    return <Navigate to="/" />;
+  }
 
-export default App;
+  return <>{children}</>;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/pets" element={<Pets />} />
+      <Route path="/sobre" element={<About />} />
+      <Route path="/contribuir" element={<Contribute />} />
+      <Route
+        path="/funcionario"
+        element={
+          <ProtectedRoute requireEmployee>
+            <Funcionario />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
+}
+
+export default function App() {
+  return (
+    <Router>
+      <AuthProvider>
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <main className="flex-grow">
+            <AppRoutes />
+          </main>
+          <Footer />
+        </div>
+      </AuthProvider>
+    </Router>
+  );
+}
