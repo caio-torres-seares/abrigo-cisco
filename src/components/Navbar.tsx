@@ -44,9 +44,6 @@ const Navbar = () => {
       <div className="hidden md:flex items-center gap-6">
         <Link to="/" className="text-primary-text hover:opacity-80 transition">Início</Link>
         <Link to="/pets" className="text-primary-text hover:opacity-80 transition">Procurar</Link>
-        {isAuthenticated && !user?.isEmployee && (
-          <Link to="/solicitacoes" className="text-primary-text hover:opacity-80 transition">Solicitações</Link>
-        )}
         <Link to="/sobre-nos" className="text-primary-text hover:opacity-80 transition">Sobre Nós</Link>
         <Link to="/contribuir" className="text-primary-text hover:opacity-80 transition">Contribuir</Link>
         {isAuthenticated ? (
