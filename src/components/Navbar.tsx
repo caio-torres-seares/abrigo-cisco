@@ -1,11 +1,13 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, User, Settings } from 'lucide-react';
+import { Menu, X, User, Settings, Heart, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -42,6 +44,9 @@ const Navbar = () => {
       <div className="hidden md:flex items-center gap-6">
         <Link to="/" className="text-primary-text hover:opacity-80 transition">Início</Link>
         <Link to="/pets" className="text-primary-text hover:opacity-80 transition">Procurar</Link>
+        {isAuthenticated && !user?.isEmployee && (
+          <Link to="/solicitacoes" className="text-primary-text hover:opacity-80 transition">Solicitações</Link>
+        )}
         <Link to="/sobre-nos" className="text-primary-text hover:opacity-80 transition">Sobre Nós</Link>
         <Link to="/contribuir" className="text-primary-text hover:opacity-80 transition">Contribuir</Link>
         {isAuthenticated ? (
@@ -61,6 +66,23 @@ const Navbar = () => {
                 <span>{user?.name}</span>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
+                {!user?.isEmployee && (
+                  <>
+                    <DropdownMenuItem asChild>
+                      <Link to="/perfil" className="flex items-center gap-2">
+                        <FileText size={16} />
+                        Meu Perfil
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/solicitacoes" className="flex items-center gap-2">
+                        <Heart size={16} />
+                        Minhas Solicitações
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
                 <DropdownMenuItem onClick={handleLogout}>
                   Sair
                 </DropdownMenuItem>
@@ -81,6 +103,9 @@ const Navbar = () => {
           <div className="flex flex-col p-4 gap-4">
             <Link to="/" className="text-primary-text hover:opacity-80 transition py-2">Início</Link>
             <Link to="/pets" className="text-primary-text hover:opacity-80 transition py-2">Procurar</Link>
+            {isAuthenticated && !user?.isEmployee && (
+              <Link to="/solicitacoes" className="text-primary-text hover:opacity-80 transition py-2">Solicitações</Link>
+            )}
             <Link to="/sobre-nos" className="text-primary-text hover:opacity-80 transition py-2">Sobre Nós</Link>
             <Link to="/contribuir" className="text-primary-text hover:opacity-80 transition py-2">Contribuir</Link>
             {isAuthenticated ? (
@@ -93,6 +118,18 @@ const Navbar = () => {
                     <Settings size={20} />
                     Área do Funcionário
                   </Link>
+                )}
+                {!user?.isEmployee && (
+                  <>
+                    <Link to="/perfil" className="flex items-center gap-2 text-primary-text hover:opacity-80 transition py-2">
+                      <FileText size={16} />
+                      Meu Perfil
+                    </Link>
+                    <Link to="/solicitacoes" className="flex items-center gap-2 text-primary-text hover:opacity-80 transition py-2">
+                      <Heart size={16} />
+                      Minhas Solicitações
+                    </Link>
+                  </>
                 )}
                 <div className="flex items-center gap-2 py-2 text-primary-text">
                   <User size={20} />

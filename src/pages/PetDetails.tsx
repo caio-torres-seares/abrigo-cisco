@@ -1,14 +1,33 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import { useAuth } from '@/contexts/AuthContext';
+import { useProfile } from '@/contexts/ProfileContext';
+import ProfileRequiredModal from '@/components/ProfileRequiredModal';
+import { createAdoptionRequest } from '@/services/adoptionService';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+  const { isProfileComplete } = useProfile();
+  const { toast } = useToast();
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   // Simula a busca de detalhes do pet pelo ID
   // Em um aplicativo real, isso seria obtido de uma API
@@ -45,6 +64,35 @@ const PetDetails = () => {
     "/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png",
     "/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png"
   ];
+
+  const handleAdoptionRequest = () => {
+    if (!isAuthenticated) {
+      toast({
+        title: "Login necessário",
+        description: "Você precisa estar logado para solicitar uma adoção.",
+        variant: "destructive",
+      });
+      navigate('/login');
+      return;
+    }
+    
+    if (!isProfileComplete) {
+      setShowProfileModal(true);
+      return;
+    }
+    
+    if (user) {
+      // Criar uma solicitação de adoção
+      createAdoptionRequest(
+        pet.id,
+        user.id,
+        pet.name,
+        pet.image
+      );
+      
+      setShowSuccessDialog(true);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -190,6 +238,7 @@ const PetDetails = () => {
               <div className="mt-8 flex justify-center">
                 <Button 
                   size="lg" 
+                  onClick={handleAdoptionRequest}
                   className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-8 py-6 rounded-full"
                 >
                   Solicitar Adoção
@@ -198,6 +247,36 @@ const PetDetails = () => {
             </div>
           </div>
         </div>
+        
+        {/* Modal para preenchimento de perfil */}
+        {showProfileModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <ProfileRequiredModal petName={pet.name} />
+          </div>
+        )}
+        
+        {/* Diálogo de confirmação de solicitação */}
+        <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Solicitação Enviada!</DialogTitle>
+              <DialogDescription>
+                Sua solicitação para adoção de {pet.name} foi enviada com sucesso.
+                Você será notificado quando houver uma atualização.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button 
+                onClick={() => {
+                  setShowSuccessDialog(false);
+                  navigate('/solicitacoes');
+                }}
+              >
+                Ver minhas solicitações
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </main>
       
       <Footer />

@@ -27,4 +27,32 @@
   .text-primary-foreground {
     @apply text-primary-text;
   }
+  
+  .btn-primary {
+    @apply bg-primary text-primary-text hover:bg-primary-dark rounded-md transition-colors;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .animate-float-up {
+    animation: floatUp 0.8s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes floatUp {
+    from { 
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 } 
