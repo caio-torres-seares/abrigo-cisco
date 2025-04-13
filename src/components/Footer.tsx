@@ -41,7 +41,7 @@ const Footer = () => {
              className="bg-background p-2 rounded-full hover:bg-primary hover:text-white transition-colors">
             <Facebook size={20} />
           </a>
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://github.com/caio-torres-seares/pet-finder-amigo-project" target="_blank" rel="noopener noreferrer"
              className="bg-background p-2 rounded-full hover:bg-primary hover:text-white transition-colors">
             <Github size={20} />
           </a>
