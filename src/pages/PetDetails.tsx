@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { ArrowLeft, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/contexts/ProfileContext';
 import ProfileRequiredModal from '@/components/ProfileRequiredModal';
-import { createAdoptionRequest } from '@/services/adoptionService';
+import { adoptionService } from '@/services/adoptionService';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { petService, Pet } from '@/services/petService';
 
 const PetDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,27 +28,57 @@ const PetDetails = () => {
   const { toast } = useToast();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [pet, setPet] = useState<Pet | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Simula a busca de detalhes do pet pelo ID
-  // Em um aplicativo real, isso seria obtido de uma API
-  const pet = {
-    id: Number(id),
-    name: 'Clebin',
-    age: '2 anos',
-    breed: 'SRD (Sem Raça Definida)',
-    type: 'cachorro',
-    image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    personality: ['Amigável', 'Brincalhão', 'Calmo'],
-    gender: 'Macho',
-    weight: '7kg',
-    color: 'Amarelo',
-    size: 'Médio',
-    health: 'Vacinado, vermifugado e castrado',
-    temperament: 'Alegre, brincalhão e muito carinhoso',
-    goodWith: 'Crianças, outros cães e gatos',
-    training: 'Já faz as necessidades no lugar certo e está desenvolvendo comandos básicos',
-    history: 'Clebin foi resgatado das ruas e agora está esperando uma família amorosa para dar a melhor vida animal!'
-  };
+  useEffect(() => {
+    const fetchPet = async () => {
+      if (!id) {
+        setError('ID do pet não fornecido');
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const data = await petService.getPetById(id);
+        setPet(data);
+        setError(null);
+      } catch (err) {
+        setError('Erro ao carregar os detalhes do pet. Por favor, tente novamente.');
+        console.error('Erro ao buscar pet:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPet();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-lg">Carregando detalhes do pet...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !pet) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 text-lg mb-4">{error || 'Pet não encontrado'}</p>
+          <Button onClick={() => navigate('/pets')}>
+            Voltar para lista de pets
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Responsável pelo pet
   const caretaker = {
@@ -83,11 +113,11 @@ const PetDetails = () => {
     
     if (user) {
       // Criar uma solicitação de adoção
-      createAdoptionRequest(
-        pet.id,
+      adoptionService.createAdoptionRequest(
+        pet._id,
         user.id,
         pet.name,
-        pet.image
+        pet.photos[0]
       );
       
       setShowSuccessDialog(true);
@@ -96,7 +126,6 @@ const PetDetails = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       
       <main className="flex-grow py-6 px-4 md:px-8 max-w-6xl mx-auto w-full">
         <button 
@@ -112,11 +141,17 @@ const PetDetails = () => {
             {/* Coluna da esquerda - Foto principal e informações básicas */}
             <div className="md:col-span-1 bg-amber-200 p-4 flex flex-col">
               <div className="flex justify-center mb-4">
-                <img 
-                  src={pet.image} 
-                  alt={pet.name} 
-                  className="w-full rounded-lg aspect-square object-cover"
-                />
+                {pet.photos && pet.photos.length > 0 ? (
+                  <img 
+                    src={pet.photos[0]} 
+                    alt={pet.name} 
+                    className="w-full rounded-lg aspect-square object-cover"
+                  />
+                ) : (
+                  <div className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                    <span className="text-gray-400">Sem foto</span>
+                  </div>
+                )}
               </div>
               
               <div className="bg-white rounded-lg p-4 mt-auto">
@@ -124,7 +159,7 @@ const PetDetails = () => {
                 <p className="text-sm text-gray-500 mb-4">Último Atualizacao: 8 de Abril de 2023</p>
                 
                 <div className="flex flex-wrap gap-1 mb-3">
-                  {pet.personality.map((trait, index) => (
+                  {/* {pet.personality.map((trait, index) => (
                     <Badge 
                       key={index} 
                       className={`
@@ -135,7 +170,7 @@ const PetDetails = () => {
                     >
                       {trait}
                     </Badge>
-                  ))}
+                  ))} */}
                 </div>
                 
                 <p className="text-sm mb-4">
@@ -146,7 +181,7 @@ const PetDetails = () => {
                 <div className="flex justify-center gap-2 mt-4">
                   <Badge className="rounded-full px-4 py-1 bg-red-500 text-white">{pet.gender}</Badge>
                   <Badge className="rounded-full px-4 py-1 bg-orange-300 text-white">{pet.age}</Badge>
-                  <Badge className="rounded-full px-4 py-1 bg-purple-400 text-white">{pet.weight}</Badge>
+                  {/* <Badge className="rounded-full px-4 py-1 bg-purple-400 text-white">{pet.weight}</Badge> */}
                 </div>
               </div>
             </div>
@@ -159,6 +194,10 @@ const PetDetails = () => {
                 <div>
                   <p className="text-sm font-medium">Nome:</p>
                   <p>{pet.name}</p>
+                </div>
+                <div>
+                  <p className="text-sm font-medium">Espécie:</p>
+                  <p>{pet.species}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium">Raça:</p>
@@ -179,6 +218,10 @@ const PetDetails = () => {
                 <div>
                   <p className="text-sm font-medium">Porte:</p>
                   <p>{pet.size}</p>
+                </div>
+                <div className="md:col-span-2">
+                  <p className="text-sm font-medium">Status:</p>
+                  <p>{pet.status}</p>
                 </div>
                 <div className="md:col-span-2">
                   <p className="text-sm font-medium">Saúde:</p>
@@ -279,7 +322,6 @@ const PetDetails = () => {
         </Dialog>
       </main>
       
-      <Footer />
     </div>
   );
 };

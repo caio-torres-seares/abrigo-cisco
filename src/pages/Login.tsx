@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function Login() {
+export function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();

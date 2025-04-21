@@ -1,97 +1,107 @@
-
 import React, { useState } from 'react';
-import { ImageOff } from 'lucide-react';
-import PetModal from './PetModal';
+import { Link } from 'react-router-dom';
+import { Pet } from '@/services/petService';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface PetCardProps {
-  id: number;
-  name: string;
-  age: string;
-  breed: string;
-  image: string;
-  type: string;
-  personality?: string[];
-  gender?: string;
-  weight?: string;
+  pet: Pet;
 }
 
-
-const PetCard = ({ id, name, age, breed, image, type, personality, gender, weight }: PetCardProps) => {
+const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [imageError, setImageError] = useState(false);
-
-  // Seleciona uma cor de fundo baseada no nome do pet
-  const getBgColor = () => {
-    const colors = [
-      'bg-amber-200',
-      'bg-red-200',
-      'bg-lime-200',
-      'bg-cyan-200',
-      'bg-orange-300',
-    ];
-    
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
-  };
-
-  const handleCardClick = () => {
-    console.log('Card clicked, opening modal for', name);
-    setIsModalOpen(true);
-  };
-
-  const handleImageError = () => {
-    console.log('Image failed to load for', name);
-    setImageError(true);
-  };
 
   return (
     <>
       <div 
-        className="relative rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer h-full"
-        onClick={handleCardClick}
+        className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+        onClick={() => setIsModalOpen(true)}
       >
-        {/* Área da imagem */}
-        <div className={`relative ${getBgColor()} pb-[100%]`}>
-          {!imageError ? (
+        <div className="aspect-square relative">
+          {pet.photos && pet.photos.length > 0 ? (
             <img 
-              src={image} 
-              alt={`Foto de ${name}`}
-              className="absolute inset-0 w-full h-full object-cover"
-              onError={handleImageError}
+              src={pet.photos[0]} 
+              alt={pet.name}
+              className="w-full h-full object-cover"
             />
           ) : (
-            <div className="absolute inset-0 w-full h-full flex items-center justify-center">
-              <ImageOff className="h-12 w-12 text-gray-500" />
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400">Sem foto</span>
             </div>
           )}
         </div>
         
-        {/* Informações do pet */}
-        <div className="p-4 bg-white">
-          <h3 className="font-medium text-lg">{name}</h3>
-          <div className="flex flex-col text-sm text-gray-600">
-            <span>{breed}</span>
-            <span>{age}</span>
-          </div>
+        <div className="p-4">
+          <h3 className="font-semibold text-lg mb-1">{pet.name}</h3>
+          <p className="text-sm text-gray-600 mb-1">
+            {pet.species} • {pet.gender}
+          </p>
+          {pet.breed && (
+            <p className="text-sm text-gray-600 mb-1">{pet.breed}</p>
+          )}
+          {pet.age && (
+            <p className="text-sm text-gray-600">{pet.age} anos</p>
+          )}
         </div>
       </div>
 
-      {/* Modal com detalhes do pet */}
-      <PetModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        pet={{ 
-          id, 
-          name, 
-          age, 
-          breed, 
-          type, 
-          image,
-          personality,
-          gender,
-          weight
-        }} 
-      />
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{pet.name}</DialogTitle>
+            <DialogDescription>
+              {pet.species} • {pet.gender} • {pet.age} anos
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            {pet.photos && pet.photos.length > 0 && (
+              <div className="aspect-square relative rounded-lg overflow-hidden">
+                <img 
+                  src={pet.photos[0]} 
+                  alt={pet.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            
+            <div className="space-y-2">
+              {pet.breed && (
+                <p className="text-sm">
+                  <span className="font-medium">Raça:</span> {pet.breed}
+                </p>
+              )}
+              <p className="text-sm">
+                <span className="font-medium">Porte:</span> {pet.size}
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Status:</span> {pet.status}
+              </p>
+              {pet.description && (
+                <p className="text-sm text-gray-600 mt-2">{pet.description}</p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="flex gap-2">
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Fechar
+            </Button>
+            <Link to={`/pets/${pet._id}`}>
+              <Button>
+                Ver mais detalhes
+              </Button>
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

@@ -26,6 +26,15 @@ export interface UpdateAdoptionStatusData {
   status: 'pendente' | 'aprovada' | 'rejeitada' | 'cancelada';
 }
 
+export interface AdoptionRequest {
+  _id: string;
+  petId: string;
+  userId: string;
+  status: 'pendente' | 'aprovado' | 'rejeitado';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export const adoptionService = {
   async listAdoptions(): Promise<Adoption[]> {
     const response = await api.get<Adoption[]>('/adoptions');
@@ -49,6 +58,26 @@ export const adoptionService = {
 
   async cancelAdoption(id: string): Promise<Adoption> {
     const response = await api.put<Adoption>(`/adoptions/${id}/cancel`);
+    return response.data;
+  },
+
+  async createAdoptionRequest(petId: string, userId: string, petName: string, petPhoto: string): Promise<AdoptionRequest> {
+    const response = await api.post<AdoptionRequest>('/adoptions', {
+      petId,
+      userId,
+      petName,
+      petPhoto
+    });
+    return response.data;
+  },
+
+  async getAdoptionRequests(): Promise<AdoptionRequest[]> {
+    const response = await api.get<AdoptionRequest[]>('/adoptions');
+    return response.data;
+  },
+
+  async updateAdoptionStatusRequest(id: string, status: 'aprovado' | 'rejeitado'): Promise<AdoptionRequest> {
+    const response = await api.put<AdoptionRequest>(`/adoptions/${id}`, { status });
     return response.data;
   }
 };

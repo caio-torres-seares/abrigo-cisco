@@ -16,7 +16,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 import Index from "@/pages/Index";
-import Login from "@/pages/Login";
+import { Login } from "@/pages/Login";
 import Cadastro from "@/pages/Cadastro";
 import Pets from "@/pages/Pets";
 import Contribute from "@/pages/Contribute";
@@ -28,6 +28,7 @@ import RegisterPet from "./pages/employee/RegisterPet";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/employee/Settings";
 import EmployeePets from "./pages/employee/EmployeePets";
+import PetDetails from "./pages/PetDetails";
 
 // Componente para rotas protegidas
 function ProtectedRoute({
@@ -62,8 +63,10 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path="/cadastro" element={<Cadastro />} />
       <Route path="/pets" element={<Pets />} />
+      <Route path="/pets/:id" element={<PetDetails />} />
       <Route path="/sobre-nos" element={<SobreNos />} />
       <Route path="/contribuir" element={<Contribute />} />
+      <Route path="/registro" element={<Cadastro />} />
       <Route
         path="/funcionario"
         element={
@@ -101,6 +104,22 @@ function AppRoutes() {
         element={
           <ProtectedRoute requireEmployee>
             <Settings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/funcionarios/pets"
+        element={
+          <ProtectedRoute requireEmployee>
+            <EmployeePets />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/funcionarios/adocoes"
+        element={
+          <ProtectedRoute requireEmployee>
+            <AdoptionRequests />
           </ProtectedRoute>
         }
       />
