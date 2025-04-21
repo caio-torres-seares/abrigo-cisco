@@ -1,21 +1,5 @@
 import api from './api';
-import { Pet } from './petService';
-
-export interface Adoption {
-  id: string;
-  pet: Pet;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    phone?: string;
-  };
-  status: 'pendente' | 'aprovada' | 'rejeitada' | 'cancelada';
-  adoptionDate?: string;
-  notes?: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { Adoption } from '@/types/adoption';
 
 export interface CreateAdoptionData {
   pet: string;
@@ -24,15 +8,6 @@ export interface CreateAdoptionData {
 
 export interface UpdateAdoptionStatusData {
   status: 'pendente' | 'aprovada' | 'rejeitada' | 'cancelada';
-}
-
-export interface AdoptionRequest {
-  _id: string;
-  petId: string;
-  userId: string;
-  status: 'pendente' | 'aprovado' | 'rejeitado';
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export const adoptionService = {
@@ -59,25 +34,25 @@ export const adoptionService = {
   async cancelAdoption(id: string): Promise<Adoption> {
     const response = await api.put<Adoption>(`/adoptions/${id}/cancel`);
     return response.data;
-  },
-
-  async createAdoptionRequest(petId: string, userId: string, petName: string, petPhoto: string): Promise<AdoptionRequest> {
-    const response = await api.post<AdoptionRequest>('/adoptions', {
-      petId,
-      userId,
-      petName,
-      petPhoto
-    });
-    return response.data;
-  },
-
-  async getAdoptionRequests(): Promise<AdoptionRequest[]> {
-    const response = await api.get<AdoptionRequest[]>('/adoptions');
-    return response.data;
-  },
-
-  async updateAdoptionStatusRequest(id: string, status: 'aprovado' | 'rejeitado'): Promise<AdoptionRequest> {
-    const response = await api.put<AdoptionRequest>(`/adoptions/${id}`, { status });
-    return response.data;
   }
+};
+
+export const getUserRequests = async (userId: string): Promise<Adoption[]> => {
+  const response = await api.get<Adoption[]>('/adoptions');
+  return response.data;
+};
+
+export const createAdoptionRequest = async (petId: string, notes?: string): Promise<Adoption> => {
+  const response = await api.post<Adoption>('/adoptions', { pet: petId, notes });
+  return response.data;
+};
+
+export const updateAdoptionStatus = async (id: string, status: 'pendente' | 'aprovada' | 'rejeitada' | 'cancelada'): Promise<Adoption> => {
+  const response = await api.put<Adoption>(`/adoptions/${id}/status`, { status });
+  return response.data;
+};
+
+export const cancelAdoption = async (id: string): Promise<Adoption> => {
+  const response = await api.put<Adoption>(`/adoptions/${id}/cancel`);
+  return response.data;
 };

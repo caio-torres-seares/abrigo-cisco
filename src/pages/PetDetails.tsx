@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/contexts/ProfileContext';
 import ProfileRequiredModal from '@/components/ProfileRequiredModal';
-import { adoptionService } from '@/services/adoptionService';
+import { createAdoptionRequest } from '@/services/adoptionService';
 import {
   Dialog,
   DialogContent,
@@ -95,7 +95,7 @@ const PetDetails = () => {
     "/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png"
   ];
 
-  const handleAdoptionRequest = () => {
+  const handleAdoptionRequest = async () => {
     if (!isAuthenticated) {
       toast({
         title: "Login necessário",
@@ -112,15 +112,18 @@ const PetDetails = () => {
     }
     
     if (user) {
-      // Criar uma solicitação de adoção
-      adoptionService.createAdoptionRequest(
-        pet._id,
-        user.id,
-        pet.name,
-        pet.photos[0]
-      );
-      
-      setShowSuccessDialog(true);
+      try {
+        // Criar uma solicitação de adoção
+        await createAdoptionRequest(pet._id);
+        setShowSuccessDialog(true);
+      } catch (error) {
+        console.error('Erro ao criar solicitação de adoção:', error);
+        toast({
+          title: "Erro",
+          description: "Não foi possível criar a solicitação de adoção. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     }
   };
 

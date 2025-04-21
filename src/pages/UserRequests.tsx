@@ -1,35 +1,41 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Clock, CheckCircle2, XCircle, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/contexts/ProfileContext';
 import { getUserRequests } from '@/services/adoptionService';
-import { AdoptionRequest } from '@/types/adoption';
+import { Adoption } from '@/types/adoption';
 import { Button } from '@/components/ui/button';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 
 const UserRequests = () => {
   const { user } = useAuth();
   const { isProfileComplete } = useProfile();
   const navigate = useNavigate();
-  const [requests, setRequests] = useState<AdoptionRequest[]>([]);
+  const [requests, setRequests] = useState<Adoption[]>([]);
   
   useEffect(() => {
-    if (user) {
-      const userRequests = getUserRequests(user.id);
-      setRequests(userRequests);
-    }
+    const fetchRequests = async () => {
+      if (user) {
+        try {
+          const userRequests = await getUserRequests(user.id);
+          setRequests(userRequests);
+        } catch (error) {
+          console.error('Erro ao buscar solicitações:', error);
+          setRequests([]);
+        }
+      }
+    };
+
+    fetchRequests();
   }, [user]);
   
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'pendente':
         return 'bg-yellow-100 text-yellow-800';
-      case 'approved':
+      case 'aprovada':
         return 'bg-green-100 text-green-800';
-      case 'rejected':
+      case 'rejeitada':
         return 'bg-red-100 text-red-800';
       default:
         return 'bg-gray-100 text-gray-800';
@@ -38,11 +44,11 @@ const UserRequests = () => {
   
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'pendente':
         return <Clock className="w-5 h-5" />;
-      case 'approved':
+      case 'aprovada':
         return <CheckCircle2 className="w-5 h-5" />;
-      case 'rejected':
+      case 'rejeitada':
         return <XCircle className="w-5 h-5" />;
       default:
         return null;
@@ -51,11 +57,11 @@ const UserRequests = () => {
   
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'pending':
+      case 'pendente':
         return 'Em análise';
-      case 'approved':
+      case 'aprovada':
         return 'Aprovada';
-      case 'rejected':
+      case 'rejeitada':
         return 'Recusada';
       default:
         return 'Desconhecido';
@@ -73,7 +79,6 @@ const UserRequests = () => {
   
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       
       <main className="flex-grow py-6 px-4 md:px-8 max-w-6xl mx-auto w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
@@ -106,17 +111,17 @@ const UserRequests = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {requests.map((request) => (
-              <div key={request.id} className="bg-white rounded-xl overflow-hidden shadow-md">
+              <div key={request._id} className="bg-white rounded-xl overflow-hidden shadow-md">
                 <div className="h-48 overflow-hidden">
                   <img 
-                    src={request.petImage} 
-                    alt={request.petName}
+                    src={request.pet.photos[0]} 
+                    alt={request.pet.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">{request.petName}</h3>
+                    <h3 className="text-lg font-semibold">{request.pet.name}</h3>
                     <span 
                       className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusBadgeClass(request.status)}`}
                     >
@@ -143,7 +148,7 @@ const UserRequests = () => {
                     <Button 
                       variant="outline" 
                       className="w-full"
-                      onClick={() => navigate(`/pets/${request.petId}`)}
+                      onClick={() => navigate(`/pets/${request.pet._id}`)}
                     >
                       Ver detalhes do pet
                     </Button>
@@ -155,7 +160,6 @@ const UserRequests = () => {
         )}
       </main>
       
-      <Footer />
     </div>
   );
 };

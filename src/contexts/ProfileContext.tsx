@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
 
@@ -17,7 +16,7 @@ interface ProfileFormData {
 interface ProfileContextType {
   profile: ProfileFormData | null;
   isProfileComplete: boolean;
-  updateProfile: (data: ProfileFormData) => void;
+  updateProfile: (data: Partial<ProfileFormData> & { isComplete: boolean }) => void;
 }
 
 const initialProfile: ProfileFormData = {
@@ -52,9 +51,9 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [user]);
 
-  const updateProfile = (data: ProfileFormData) => {
+  const updateProfile = (data: Partial<ProfileFormData> & { isComplete: boolean }) => {
     if (user) {
-      const updatedProfile = { ...data, isComplete: true };
+      const updatedProfile = { ...profile, ...data };
       setProfile(updatedProfile);
       localStorage.setItem(`profile_${user.id}`, JSON.stringify(updatedProfile));
     }

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
@@ -19,22 +18,41 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useProfile } from '@/contexts/ProfileContext';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const formSchema = z.object({
+  monthlyIncome: z.string()
+    .min(1, 'Renda mensal é obrigatória')
+    .refine((val) => {
+      const numericValue = parseFloat(val.replace(/[^\d,]/g, '').replace(',', '.'));
+      return !isNaN(numericValue) && numericValue > 0;
+    }, 'Renda mensal deve ser um valor válido'),
+  housingType: z.string().min(1, 'Tipo de moradia é obrigatório'),
+  roomsCount: z.number().min(1, 'Número de cômodos deve ser maior que 0'),
+  hasPets: z.boolean().refine((val) => val !== undefined, 'Selecione uma opção'),
+  petsDescription: z.string().optional(),
+  hasChildren: z.boolean().refine((val) => val !== undefined, 'Selecione uma opção'),
+  childrenCount: z.number().min(0, 'Número de crianças não pode ser negativo'),
+  hoursAvailable: z.string().min(1, 'Horas disponíveis é obrigatório'),
+});
+
+type ProfileFormData = z.infer<typeof formSchema>;
 
 const ProfileForm = () => {
   const { profile, updateProfile } = useProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  const form = useForm({
+  const form = useForm<ProfileFormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       monthlyIncome: profile?.monthlyIncome || '',
-      housingType: profile?.housingType || '',
+      housingType: profile?.housingType ? profile.housingType.charAt(0).toUpperCase() + profile.housingType.slice(1) : '',
       roomsCount: profile?.roomsCount || 1,
-      hasPets: profile?.hasPets || false,
+      hasPets: profile?.hasPets,
       petsDescription: profile?.petsDescription || '',
-      hasChildren: profile?.hasChildren || false,
+      hasChildren: profile?.hasChildren,
       childrenCount: profile?.childrenCount || 0,
       hoursAvailable: profile?.hoursAvailable || '',
     },
@@ -44,11 +62,29 @@ const ProfileForm = () => {
   const hasPets = watch('hasPets');
   const hasChildren = watch('hasChildren');
 
-  const onSubmit = (data: any) => {
+  const formatCurrency = (value: string) => {
+    const numericValue = value.replace(/[^\d]/g, '');
+    if (!numericValue) return '';
+    return `R$ ${(parseInt(numericValue) / 100).toFixed(2).replace('.', ',')}`;
+  };
+
+  const handleMonthlyIncomeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const formattedValue = formatCurrency(value);
+    setValue('monthlyIncome', formattedValue);
+  };
+
+  const handleHousingTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const capitalizedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    setValue('housingType', capitalizedValue);
+  };
+
+  const onSubmit = (data: ProfileFormData) => {
     updateProfile({
       ...data,
       isComplete: true
-    });
+    } as ProfileFormData & { isComplete: boolean });
     
     toast({
       title: "Perfil atualizado",
@@ -64,7 +100,6 @@ const ProfileForm = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
       
       <main className="flex-grow py-6 px-4 md:px-8 max-w-3xl mx-auto w-full">
         <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 p-6 md:p-8">
@@ -83,7 +118,16 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Qual sua renda mensal?*</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: R$ 3.000,00" {...field} />
+                      <Input 
+                        placeholder="Ex: R$ 3.000,00" 
+                        {...field}
+                        onChange={handleMonthlyIncomeChange}
+                        onBlur={() => {
+                          if (field.value && !field.value.startsWith('R$')) {
+                            setValue('monthlyIncome', `R$ ${field.value}`);
+                          }
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -97,7 +141,11 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Qual seu tipo de moradia?*</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: Apartamento, Casa, etc." {...field} />
+                      <Input 
+                        placeholder="Ex: Apartamento, Casa, etc." 
+                        {...field}
+                        onChange={handleHousingTypeChange}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -127,7 +175,7 @@ const ProfileForm = () => {
                     <FormControl>
                       <RadioGroup
                         onValueChange={value => setValue('hasPets', value === 'true')}
-                        defaultValue={field.value ? 'true' : 'false'}
+                        value={field.value?.toString()}
                         className="flex flex-col space-y-1"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
@@ -178,7 +226,7 @@ const ProfileForm = () => {
                     <FormControl>
                       <RadioGroup
                         onValueChange={value => setValue('hasChildren', value === 'true')}
-                        defaultValue={field.value ? 'true' : 'false'}
+                        value={field.value?.toString()}
                         className="flex flex-col space-y-1"
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
@@ -256,7 +304,6 @@ const ProfileForm = () => {
         </div>
       </main>
       
-      <Footer />
     </div>
   );
 };
