@@ -22,6 +22,7 @@ import Pets from "@/pages/Pets";
 import Contribute from "@/pages/Contribute";
 import Funcionario from "@/pages/Funcionario";
 import SobreNos from "@/pages/SobreNos";
+import ProfileForm from "@/pages/ProfileForm";
 import AdoptionRequests from "./pages/employee/AdoptionRequests";
 import EditPet from "./pages/employee/EditPet";
 import RegisterPet from "./pages/employee/RegisterPet";
@@ -29,6 +30,7 @@ import NotFound from "./pages/NotFound";
 import Settings from "./pages/employee/Settings";
 import EmployeePets from "./pages/employee/EmployeePets";
 import PetDetails from "./pages/PetDetails";
+import UserRequests from "./pages/UserRequests";
 
 // Componente para rotas protegidas
 function ProtectedRoute({
@@ -67,6 +69,8 @@ function AppRoutes() {
       <Route path="/sobre-nos" element={<SobreNos />} />
       <Route path="/contribuir" element={<Contribute />} />
       <Route path="/registro" element={<Cadastro />} />
+      <Route path="/perfil" element={<ProfileForm />} />
+      <Route path="/solicitacoes" element={<UserRequests />} />
       <Route
         path="/funcionario"
         element={
