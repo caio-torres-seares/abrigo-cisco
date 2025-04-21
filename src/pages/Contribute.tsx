@@ -44,24 +44,6 @@ export default function Contribute() {
             Seja um Voluntário
           </Link>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold mb-4">Apadrinhamento</h2>
-          <p className="mb-4">
-            Apadrinhe um animal e nos ajude a custear seus cuidados. Você receberá:
-          </p>
-          <ul className="list-disc pl-6 mb-4">
-            <li className="mb-2">Fotos e atualizações regulares</li>
-            <li className="mb-2">Visitas ao animal</li>
-            <li className="mb-2">Certificado de apadrinhamento</li>
-            <li>Participação em eventos especiais</li>
-          </ul>
-          <Link
-            to="/apadrinhamento"
-            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-          >
-            Apadrinhar um Animal
-          </Link>
-        </div>
       </div>
     </div>
   );
