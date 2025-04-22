@@ -1,8 +1,9 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Instagram, Facebook, Github, ArrowRight } from "lucide-react";
 
 const Footer = () => {
+  const navigate = useNavigate();
   return (
     <footer className="w-full bg-secondary/80 pt-12 pb-4">
       <div className="container mx-auto px-4">
@@ -12,9 +13,17 @@ const Footer = () => {
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Pronto para encontrar seu amigo?
             </h2>
-            <button className="btn-primary flex items-center gap-2">
-              Vamos começar! <ArrowRight size={18} />
+          
+            <button
+              onClick={() => {
+                navigate("/pets");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              className="btn-primary inline-flex items-center gap-3 px-6 py-3 text-lg md:text-xl"
+            >
+              Vamos começar! <ArrowRight size={24} />
             </button>
+
           </div>
 
           <div className="bg-secondary/90 rounded-xl p-6 max-w-sm flex gap-4 items-start">
@@ -22,12 +31,15 @@ const Footer = () => {
               <h3 className="font-bold mb-2">
                 Nos ajude a manter nosso Abrigo de Animais!
               </h3>
-              <Link
-                to="/contribuir"
+              <button
+                onClick={() => {
+                  navigate("/contribuir");
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className="btn-primary text-sm px-4 py-2 inline-flex items-center justify-center"
               >
                 Contribuir
-              </Link>
+              </button>
             </div>
             <img
               src="https://firebasestorage.googleapis.com/v0/b/lovable-assets.appspot.com/o/cat-illustration.png?alt=media"
