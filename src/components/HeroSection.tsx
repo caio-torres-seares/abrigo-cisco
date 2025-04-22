@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
-import familyImg from '../assets/images/family.jpeg';
+import familyImg from '../assets/images/familySemFundo.png';
 import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
