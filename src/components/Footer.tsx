@@ -1,11 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Instagram, Facebook, Github, ArrowRight } from "lucide-react";
+import GatoImg from '../assets/images/GatoSemFundo.png'
 
 const Footer = () => {
   const navigate = useNavigate();
   return (
-    <footer className="w-full bg-secondary/80 pt-12 pb-4">
+    <footer className="w-full bg-white/80 pt-12 pb-4">
       <div className="container mx-auto px-4">
         {/* CTA Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
@@ -26,7 +27,7 @@ const Footer = () => {
 
           </div>
 
-          <div className="bg-secondary/90 rounded-xl p-6 max-w-sm flex gap-4 items-start">
+          <div className="bg-primary /90 rounded-xl p-6 max-w-sm flex gap-4 items-start">
             <div className="flex-1">
               <h3 className="font-bold mb-2">
                 Nos ajude a manter nosso Abrigo de Animais!
@@ -42,9 +43,9 @@ const Footer = () => {
               </button>
             </div>
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/lovable-assets.appspot.com/o/cat-illustration.png?alt=media"
-              alt="Cat illustration"
-              className="w-20"
+              src={GatoImg}
+              alt="Gato"
+              className="w-20 h-20"
             />
           </div>
         </div>

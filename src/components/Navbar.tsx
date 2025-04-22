@@ -3,6 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User, Settings, Heart, FileText } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import logoSiteImg from '../assets/images/logoSite.png';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,11 +26,11 @@ const Navbar = () => {
       {/* Logo + Nome do Site como link */}
       <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition">
         <img
-          src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png"
+          src={logoSiteImg}
           alt="Logo"
-          className="w-6 h-6"
+          className="w-15 h-14"
         />
-        <span className="font-medium text-lg text-primary-text">Abrigo Cisco</span>
+        <span className="font-bold text-[25px] text-primary-text">Abrigo Cisco</span>
       </Link>
 
       {/* Botão do menu mobile */}
@@ -42,10 +43,10 @@ const Navbar = () => {
 
       {/* Navegação para desktop */}
       <div className="hidden md:flex items-center gap-6">
-        <Link to="/" className="text-primary-text hover:opacity-80 transition">Início</Link>
-        <Link to="/pets" className="text-primary-text hover:opacity-80 transition">Procurar</Link>
-        <Link to="/sobre-nos" className="text-primary-text hover:opacity-80 transition">Sobre Nós</Link>
-        <Link to="/contribuir" className="text-primary-text hover:opacity-80 transition">Contribuir</Link>
+        <Link to="/" className="text-primary-text text-[20px] hover:opacity-80 transition">Início</Link>
+        <Link to="/pets" className="text-primary-text text-[20px] hover:opacity-80 transition">Procurar</Link>
+        <Link to="/sobre-nos" className="text-primary-text text-[20px] hover:opacity-80 transition">Sobre Nós</Link>
+        <Link to="/contribuir" className="text-primary-text text-[20px] hover:opacity-80 transition">Contribuir</Link>
         {isAuthenticated ? (
           <>
             {user?.isEmployee && (
@@ -88,8 +89,8 @@ const Navbar = () => {
           </>
         ) : (
           <>
-            <Link to="/cadastro" className="text-primary-text hover:opacity-80 transition">Criar Conta</Link>
-            <Link to="/login" className="bg-white text-primary hover:bg-gray-100 py-2 px-4 rounded">Entrar</Link>
+            <Link to="/cadastro" className="text-primary-text text-[20px] hover:opacity-80 transition">Criar Conta</Link>
+            <Link to="/login" className="bg-white text-primary text-[20px] hover:bg-gray-100 py-2 px-4 rounded">Entrar</Link>
           </>
         )}
       </div>

@@ -4,6 +4,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import EntrarImg from '../assets/images/EntrarSemFundo.png';
+import PataImg from '../assets/images/pataSemFundo.png';
 
 export function Login() {
   const navigate = useNavigate();
@@ -37,7 +39,7 @@ export function Login() {
             A Felicidade<br />Começa Aqui
           </h1>
           <img
-            src="/lovable-uploads/e39766e2-7f83-4a57-b415-37b0aa632e36.png"
+            src={EntrarImg}
             alt="Pessoa com animais"
             className="max-w-xs mx-auto"
           />
@@ -55,7 +57,7 @@ export function Login() {
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-6">
             <img
-              src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png"
+              src={PataImg}
               alt="Pata"
               className="w-12 h-12"
             />

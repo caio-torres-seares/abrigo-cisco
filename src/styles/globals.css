@@ -3,6 +3,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .text-primary-text {
+    color: var(--primary-text) !important;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -10,7 +16,8 @@
     --primary: #ECC8AF;
     --primary-light: #ECC8AF99;
     --primary-dark: #D4B39A;
-    --primary-text: #FFFFFF;
+    --primary-text: #714949;
+    --primary-orange: #FA8C01;
   }
 }
 
@@ -30,6 +37,10 @@
   
   .btn-primary {
     @apply bg-primary text-primary-text hover:bg-primary-dark rounded-md transition-colors;
+  }
+
+  .text-primary-orange {
+    color: var(--primary-orange);
   }
   
   .animate-fade-in {

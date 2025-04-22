@@ -16,9 +16,9 @@ const HeroSection = () => {
 
       <div className="w-full md:w-1/2 text-center md:text-left animate-float-up">
         <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
-          <span className="text-foreground">Procure.</span>
-          <span className="text-primary-text"> Adote.</span>
-          <span className="text-foreground"> Ame.</span>
+          <span className="text-primary-text">Procure.</span>
+          <span className="text-primary-orange"> Adote.</span>
+          <span className="text-primary-text"> Ame.</span>
         </h1>
 
         <Link

@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import EntrarImg from '../assets/images/EntrarSemFundo.png';
+import PataImg from '../assets/images/pataSemFundo.png';
 
 const Cadastro = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,10 +23,6 @@ const Cadastro = () => {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Lado esquerdo - Imagem e texto */}
       <div className="bg-secondary/60 w-full md:w-1/2 p-10 flex flex-col justify-center items-center relative">
-        <Link to="/" className="absolute top-8 left-8 flex items-center gap-2">
-          <img src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png" alt="Logo" className="w-6 h-6" />
-          <span className="font-medium">Abrigo Cisco</span>
-        </Link>
         
         <div className="max-w-md mx-auto text-center md:text-left mt-16 md:mt-0">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">
@@ -32,7 +30,7 @@ const Cadastro = () => {
           </h1>
           
           <img 
-            src="/lovable-uploads/e39766e2-7f83-4a57-b415-37b0aa632e36.png" 
+            src={EntrarImg}
             alt="Pessoa com animais" 
             className="max-w-xs mx-auto"
           />
@@ -50,7 +48,7 @@ const Cadastro = () => {
         <div className="w-full max-w-md">
           <div className="flex justify-center mb-6">
             <img 
-              src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png" 
+              src={PataImg}
               alt="Pata" 
               className="w-12 h-12" 
             />
