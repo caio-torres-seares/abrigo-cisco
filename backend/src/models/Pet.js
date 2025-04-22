@@ -9,7 +9,6 @@ const petSchema = new mongoose.Schema({
   species: {
     type: String,
     required: [true, 'Espécie é obrigatória'],
-    enum: ['cachorro', 'gato', 'outro'],
     trim: true
   },
   breed: {

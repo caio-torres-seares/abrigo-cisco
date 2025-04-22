@@ -35,6 +35,14 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
     setImageError(true);
   };
 
+  // Função para formatar a URL da imagem
+  const getImageUrl = (imagePath: string) => {
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    return `http://localhost:3000${imagePath}`;
+  };
+
   return (
     <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <AlertDialogContent className="max-w-3xl w-full p-0 border border-primary shadow-xl bg-white rounded-2xl overflow-y-auto max-h-[90vh]">
@@ -56,7 +64,7 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
           <div className="bg-primary-light flex justify-center items-center p-4 md:w-1/2 w-full">
             {!imageError ? (
               <img
-                src={pet.image}
+                src={getImageUrl(pet.image)}
                 alt={`Foto de ${pet.name}`}
                 className="w-full max-h-80 object-cover rounded-lg shadow-inner"
                 onError={handleImageError}
@@ -107,7 +115,6 @@ const PetModal = ({ isOpen, onClose, pet }: PetModalProps) => {
           </div>
         </div>
       </AlertDialogContent>
-
     </AlertDialog>
   );
 };

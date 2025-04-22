@@ -9,13 +9,19 @@ exports.createPet = async (req, res) => {
     
     // Adiciona os caminhos das fotos ao petData
     if (req.files && req.files.length > 0) {
-      petData.photos = req.files.map(file => `/uploads/${file.filename}`);
+      console.log('Arquivos recebidos:', req.files);
+      petData.photos = req.files.map(file => {
+        console.log('Caminho do arquivo:', file.path);
+        console.log('Nome do arquivo:', file.filename);
+        return `/uploads/${file.filename}`;
+      });
     }
 
     const pet = new Pet(petData);
     await pet.save();
     res.status(201).json(pet);
   } catch (error) {
+    console.error('Erro ao criar pet:', error);
     // Se houver erro, remove as imagens salvas
     if (req.files) {
       for (const file of req.files) {

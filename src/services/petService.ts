@@ -24,6 +24,7 @@ export interface CreatePetData {
   size: 'pequeno' | 'médio' | 'grande';
   description?: string;
   photos: string[];
+  status: 'disponível' | 'em processo de adoção' | 'adotado';
 }
 
 export interface UpdatePetData {
@@ -49,19 +50,8 @@ export const petService = {
     return response.data;
   },
 
-  async createPet(data: CreatePetData): Promise<Pet> {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'photos') {
-        (value as string[]).forEach(file => {
-          formData.append('photos', file);
-        });
-      } else if (value !== undefined) {
-        formData.append(key, value.toString());
-      }
-    });
-
-    const response = await api.post<Pet>('/pets', formData, {
+  async createPet(data: FormData): Promise<Pet> {
+    const response = await api.post<Pet>('/pets', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

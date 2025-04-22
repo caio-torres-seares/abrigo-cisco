@@ -18,6 +18,14 @@ interface PetCardProps {
 const PetCard: React.FC<PetCardProps> = ({ pet }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Função para formatar a URL da imagem
+  const getImageUrl = (imagePath: string) => {
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    return `http://localhost:3000${imagePath}`;
+  };
+
   return (
     <>
       <div 
@@ -27,7 +35,7 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
         <div className="aspect-square relative">
           {pet.photos && pet.photos.length > 0 ? (
             <img 
-              src={pet.photos[0]} 
+              src={getImageUrl(pet.photos[0])} 
               alt={pet.name}
               className="w-full h-full object-cover"
             />
@@ -64,8 +72,8 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
           <div className="space-y-4">
             {pet.photos && pet.photos.length > 0 && (
               <div className="aspect-square relative rounded-lg overflow-hidden">
-                <img 
-                  src={pet.photos[0]} 
+                <img
+                  src={getImageUrl(pet.photos[0])}
                   alt={pet.name}
                   className="w-full h-full object-cover"
                 />

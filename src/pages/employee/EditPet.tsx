@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,51 +6,138 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { ImageOff, Pencil } from 'lucide-react';
 import EmployeeLayout from '@/components/EmployeeLayout';
+import { useToast } from "@/hooks/use-toast";
+import { petService, Pet, UpdatePetData } from '@/services/petService';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import api from '@/services/api';
 
 const EditPet = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [mainImageError, setMainImageError] = React.useState(false);
-  const [personalityImageError, setPersonalityImageError] = React.useState(false);
-  const [caretakerImageError, setCaretakerImageError] = React.useState(false);
+  const { toast } = useToast();
+  const [pet, setPet] = useState<Pet | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState<UpdatePetData>({});
+  const [mainImageError, setMainImageError] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
 
-  // Simular busca de dados do pet
-  const pet = {
-    id: Number(id),
-    name: 'Clebin',
-    image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    age: '2',
-    breed: 'Vira-lata',
-    type: 'cachorro',
-    weight: '7',
-    gender: 'Macho',
-    personality: 'Alegre, brincalhão e muito carinhoso',
-    temperament: 'Alegre, brincalhão e muito carinhoso',
-    goodWith: 'Crianças, outros cães e gatos',
-    color: 'Amarelo',
-    size: 'Médio',
-    training: 'Já faz as necessidades no lugar certo',
-    health: 'Vacinado, vermifugado e castrado',
-    description: 'Clebin é um cachorrinho lindo, carinhoso, mas também muito curioso. Ele está pronto para encher um lar com muita alegria, ternura e amor!'
-  };
-  
-  // Dados do responsável
-  const caretaker = {
-    name: 'Lara Silva',
-    image: 'https://randomuser.me/api/portraits/women/68.jpg',
-    description: 'Cuida do cachorrinho há mais de 3 anos desde novembro de 2023, quando o encontrou em uma situação de muita fome. Aqui no abrigo recebeu atenção, carinho e hoje está pronto para encontrar e conhecer um lar cheio de amor.'
+  useEffect(() => {
+    if (id) {
+      fetchPet();
+    }
+  }, [id]);
+
+  const fetchPet = async () => {
+    try {
+      const data = await petService.getPetById(id!);
+      setPet(data);
+      setFormData({
+        name: data.name,
+        species: data.species.toLowerCase(),
+        breed: data.breed,
+        age: data.age,
+        gender: data.gender,
+        size: data.size,
+        description: data.description,
+        status: data.status
+      });
+      if (data.photos && data.photos.length > 0) {
+        setPreviewImage(`http://localhost:3000${data.photos[0]}`);
+      }
+    } catch (error) {
+      console.error('Erro ao buscar pet:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os dados do pet.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Salvar as alterações
-    console.log('Salvando alterações do pet', id);
-    navigate('/funcionario');
+    try {
+      const formDataToSend = new FormData();
+      
+      // Adiciona os campos do formulário ao FormData
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== undefined && value !== '') {
+          formDataToSend.append(key, value.toString());
+        }
+      });
+
+      // Adiciona a nova foto se houver
+      if (selectedImage) {
+        formDataToSend.append('photos', selectedImage);
+      }
+
+      // Envia o FormData diretamente para o endpoint
+      await api.put(`/pets/${id}`, formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      toast({
+        title: "Sucesso",
+        description: "Pet atualizado com sucesso.",
+        variant: "default"
+      });
+      navigate('/funcionario/pets');
+    } catch (error) {
+      console.error('Erro ao atualizar pet:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o pet. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
-  
+
   const handleCancel = () => {
-    navigate('/funcionario');
+    navigate('/funcionario/pets');
   };
+
+  if (loading) {
+    return (
+      <EmployeeLayout>
+        <div className="w-full bg-white rounded-xl p-6 shadow-sm">
+          <h1 className="text-2xl font-bold text-center mb-6">Carregando...</h1>
+        </div>
+      </EmployeeLayout>
+    );
+  }
+
+  if (!pet) {
+    return (
+      <EmployeeLayout>
+        <div className="w-full bg-white rounded-xl p-6 shadow-sm">
+          <h1 className="text-2xl font-bold text-center mb-6">Pet não encontrado</h1>
+        </div>
+      </EmployeeLayout>
+    );
+  }
 
   return (
     <EmployeeLayout>
@@ -66,47 +153,40 @@ const EditPet = () => {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="name">Nome do Pet *</Label>
-                  <Input id="name" defaultValue={pet.name} required />
+                  <Input 
+                    id="name" 
+                    value={formData.name || ''}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    required 
+                  />
                 </div>
                 
                 <div>
-                  <Label>Foto do Pet *</Label>
+                  <Label htmlFor="pet-image">Foto do Pet</Label>
                   <div className="mt-2 relative">
-                    {!mainImageError ? (
-                      <img
-                        src={pet.image}
-                        alt={`Foto de ${pet.name}`}
-                        className="w-32 h-32 object-cover rounded-lg border"
-                        onError={() => setMainImageError(true)}
-                      />
-                    ) : (
-                      <div className="w-32 h-32 bg-gray-100 flex items-center justify-center rounded-lg border">
-                        <ImageOff className="h-8 w-8 text-gray-400" />
+                    <Label htmlFor="pet-image" className="cursor-pointer">
+                      <div className="w-32 h-32 rounded-lg border flex items-center justify-center overflow-hidden">
+                        {previewImage ? (
+                          <img
+                            src={previewImage}
+                            alt={`Foto de ${pet.name}`}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-100 flex items-center justify-center">
+                            <ImageOff className="h-8 w-8 text-gray-400" />
+                          </div>
+                        )}
                       </div>
-                    )}
-                    
-                    <button
-                      type="button"
-                      className="absolute bottom-2 right-2 bg-white rounded-full p-1 shadow-md"
-                    >
-                      <Pencil size={16} className="text-amber-500" />
-                    </button>
+                      <Input 
+                        id="pet-image" 
+                        type="file" 
+                        accept="image/*" 
+                        onChange={handleImageUpload} 
+                        className="hidden" 
+                      />
+                    </Label>
                   </div>
-                </div>
-                
-                <div>
-                  <Label>Personalidade do Pet *</Label>
-                  <div className="mt-2 grid grid-cols-2 gap-2">
-                    <div className="rounded-lg bg-primary-light w-12 h-12"></div>
-                    <div className="rounded-lg bg-red-100 w-12 h-12"></div>
-                  </div>
-                  <button
-                    type="button"
-                    className="mt-2 text-xs text-amber-600 flex items-center gap-1"
-                  >
-                    <Pencil size={12} />
-                    <span>Editar cores de personalidade</span>
-                  </button>
                 </div>
               </div>
             </div>
@@ -116,101 +196,104 @@ const EditPet = () => {
               
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="type">Espécie *</Label>
-                  <Input id="type" defaultValue={pet.type} required />
+                  <Label htmlFor="species">Espécie *</Label>
+                  <Input 
+                    id="species" 
+                    value={formData.species || ''}
+                    onChange={(e) => setFormData({ ...formData, species: e.target.value.toLowerCase() })}
+                    required 
+                  />
+                  <p className="text-sm text-gray-500 mt-1">
+                    {formData.species ? formData.species.charAt(0).toUpperCase() + formData.species.slice(1) : ''}
+                  </p>
                 </div>
                 
                 <div>
-                  <Label htmlFor="temperament">Temperamento *</Label>
-                  <Input id="temperament" defaultValue={pet.temperament} required />
+                  <Label htmlFor="breed">Raça</Label>
+                  <Input 
+                    id="breed" 
+                    value={formData.breed || ''}
+                    onChange={(e) => setFormData({ ...formData, breed: e.target.value })}
+                  />
                 </div>
                 
                 <div>
-                  <Label htmlFor="breed">Raça *</Label>
-                  <Input id="breed" defaultValue={pet.breed} required />
-                </div>
-                
-                <div>
-                  <Label htmlFor="goodWith">Convive bem com *</Label>
-                  <Input id="goodWith" defaultValue={pet.goodWith} required />
-                </div>
-                
-                <div>
-                  <Label htmlFor="age">Idade *</Label>
-                  <Input id="age" defaultValue={pet.age} required />
-                </div>
-                
-                <div>
-                  <Label htmlFor="training">Treinamento *</Label>
-                  <Input id="training" defaultValue={pet.training} required />
+                  <Label htmlFor="age">Idade</Label>
+                  <Input 
+                    id="age" 
+                    type="number"
+                    value={formData.age || ''}
+                    onChange={(e) => setFormData({ ...formData, age: Number(e.target.value) })}
+                  />
                 </div>
                 
                 <div>
                   <Label htmlFor="gender">Gênero *</Label>
-                  <Input id="gender" defaultValue={pet.gender} required />
+                  <Select
+                    value={formData.gender}
+                    onValueChange={(value: 'macho' | 'fêmea') => setFormData({ ...formData, gender: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o gênero" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="macho">Macho</SelectItem>
+                      <SelectItem value="fêmea">Fêmea</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 
                 <div>
-                  <Label htmlFor="health">Saúde *</Label>
-                  <Input id="health" defaultValue={pet.health} required />
+                  <Label htmlFor="size">Porte *</Label>
+                  <Select
+                    value={formData.size}
+                    onValueChange={(value: 'pequeno' | 'médio' | 'grande') => setFormData({ ...formData, size: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o porte" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pequeno">Pequeno</SelectItem>
+                      <SelectItem value="médio">Médio</SelectItem>
+                      <SelectItem value="grande">Grande</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
-                
+
                 <div>
-                  <Label htmlFor="weight">Peso *</Label>
-                  <Input id="weight" defaultValue={pet.weight} required />
-                </div>
-                
-                <div>
-                  <Label htmlFor="color">Cor *</Label>
-                  <Input id="color" defaultValue={pet.color} required />
+                  <Label htmlFor="status">Status *</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value: 'disponível' | 'em processo de adoção' | 'adotado') => 
+                      setFormData({ ...formData, status: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecione o status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="disponível">Disponível</SelectItem>
+                      <SelectItem value="em processo de adoção">Em processo de adoção</SelectItem>
+                      <SelectItem value="adotado">Adotado</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
           </div>
           
-          {/* Coluna da direita - Informações adicionais e responsável */}
+          {/* Coluna da direita - Descrição */}
           <div>
             <div className="mb-6">
-              <h2 className="text-lg font-semibold border-b pb-2 mb-4">Informações do Responsável</h2>
+              <h2 className="text-lg font-semibold border-b pb-2 mb-4">Descrição</h2>
               
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="caretakerName">Nome Completo do Responsável *</Label>
-                  <Input id="caretakerName" defaultValue={caretaker.name} required />
-                </div>
-                
-                <div>
-                  <Label>Foto do Responsável *</Label>
-                  <div className="mt-2 relative">
-                    {!caretakerImageError ? (
-                      <img
-                        src={caretaker.image}
-                        alt="Foto do responsável"
-                        className="w-20 h-20 object-cover rounded-full border"
-                        onError={() => setCaretakerImageError(true)}
-                      />
-                    ) : (
-                      <div className="w-20 h-20 bg-gray-100 flex items-center justify-center rounded-full border">
-                        <ImageOff className="h-6 w-6 text-gray-400" />
-                      </div>
-                    )}
-                    
-                    <button
-                      type="button"
-                      className="absolute bottom-0 right-0 bg-white rounded-full p-1 shadow-md"
-                    >
-                      <Pencil size={16} className="text-amber-500" />
-                    </button>
-                  </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="caretakerDescription">Breve Descrição do Responsável sobre o Pet *</Label>
+                  <Label htmlFor="description">Descrição do Pet</Label>
                   <Textarea
-                    id="caretakerDescription"
-                    defaultValue={caretaker.description}
-                    className="min-h-[100px]"
-                    required
+                    id="description"
+                    value={formData.description || ''}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="min-h-[200px]"
                   />
                 </div>
               </div>

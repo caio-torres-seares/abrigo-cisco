@@ -95,6 +95,14 @@ const PetDetails = () => {
     "/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png"
   ];
 
+  // Função para formatar a URL da imagem
+  const getImageUrl = (imagePath: string) => {
+    if (imagePath.startsWith('http')) {
+      return imagePath;
+    }
+    return `http://localhost:3000${imagePath}`;
+  };
+
   const handleAdoptionRequest = async () => {
     if (!isAuthenticated) {
       toast({
@@ -146,7 +154,7 @@ const PetDetails = () => {
               <div className="flex justify-center mb-4">
                 {pet.photos && pet.photos.length > 0 ? (
                   <img 
-                    src={pet.photos[0]} 
+                    src={getImageUrl(pet.photos[0])} 
                     alt={pet.name} 
                     className="w-full rounded-lg aspect-square object-cover"
                   />

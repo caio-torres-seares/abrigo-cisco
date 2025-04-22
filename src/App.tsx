@@ -3,6 +3,7 @@ import {
   Routes,
   Route,
   Navigate,
+  Outlet,
 } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,8 +13,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ProfileProvider } from "@/contexts/ProfileContext";
 
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import UserLayout from "@/layouts/UserLayout";
 
 import Index from "@/pages/Index";
 import { Login } from "@/pages/Login";
@@ -43,7 +43,7 @@ function ProtectedRoute({
   const { isAuthenticated, isEmployee, loading } = useAuth();
 
   if (loading) {
-    return <div className="text-center py-10">Carregando...</div>; // substituindo o <Loading /> inexistente
+    return <div className="text-center py-10">Carregando...</div>;
   }
 
   if (!isAuthenticated) {
@@ -61,16 +61,21 @@ function ProtectedRoute({
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/cadastro" element={<Cadastro />} />
-      <Route path="/pets" element={<Pets />} />
-      <Route path="/pets/:id" element={<PetDetails />} />
-      <Route path="/sobre-nos" element={<SobreNos />} />
-      <Route path="/contribuir" element={<Contribute />} />
-      <Route path="/registro" element={<Cadastro />} />
-      <Route path="/perfil" element={<ProfileForm />} />
-      <Route path="/solicitacoes" element={<UserRequests />} />
+      {/* Rotas com layout de usuário */}
+      <Route element={<UserLayout><Outlet /></UserLayout>}>
+        <Route path="/" element={<Index />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cadastro" element={<Cadastro />} />
+        <Route path="/pets" element={<Pets />} />
+        <Route path="/pets/:id" element={<PetDetails />} />
+        <Route path="/sobre-nos" element={<SobreNos />} />
+        <Route path="/contribuir" element={<Contribute />} />
+        <Route path="/registro" element={<Cadastro />} />
+        <Route path="/perfil" element={<ProfileForm />} />
+        <Route path="/solicitacoes" element={<UserRequests />} />
+      </Route>
+
+      {/* Rotas de funcionário (sem layout de usuário) */}
       <Route
         path="/funcionario"
         element={
@@ -112,7 +117,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/funcionarios/pets"
+        path="/funcionario/pets"
         element={
           <ProtectedRoute requireEmployee>
             <EmployeePets />
@@ -148,13 +153,7 @@ export default function App() {
             <Toaster />
             <Sonner />
             <Router>
-              <div className="flex flex-col min-h-screen">
-                <Navbar />
-                <main className="flex-grow">
-                  <AppRoutes />
-                </main>
-                <Footer />
-              </div>
+              <AppRoutes />
             </Router>
           </TooltipProvider>
         </ProfileProvider>

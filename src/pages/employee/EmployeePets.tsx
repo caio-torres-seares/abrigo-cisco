@@ -1,116 +1,93 @@
-
-import React, { useState } from 'react';
-import { Search, Dog, Cat } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Dog, Cat, Trash2, Pencil } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import EmployeeLayout from '@/components/EmployeeLayout';
-import EmployeePetCard from '@/components/employee/EmployeePetCard';
+import { useToast } from "@/hooks/use-toast";
+import { petService, Pet } from '@/services/petService';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const EmployeePets = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [animalType, setAnimalType] = useState<string>('todos');
+  const [pets, setPets] = useState<Pet[]>([]);
+  const [selectedPet, setSelectedPet] = useState<Pet | null>(null);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
-  
-  // Dados simulados dos pets
-  const pets = [
-    { 
-      id: 1, 
-      name: 'Jujuba', 
-      age: '3 anos', 
-      breed: 'Yorkshire Terrier', 
-      type: 'cachorro', 
-      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    },
-    { 
-      id: 2, 
-      name: 'Laranjinha', 
-      age: '1 ano', 
-      breed: 'Half-breed', 
-      type: 'gato', 
-      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
-    },
-    { 
-      id: 3, 
-      name: 'Clebin', 
-      age: '2 anos', 
-      breed: 'Vira-lata', 
-      type: 'cachorro', 
-      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    },
-    { 
-      id: 4, 
-      name: 'Juninho', 
-      age: '2 meses', 
-      breed: 'British Longhair', 
-      type: 'gato', 
-      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
-    },
-    { 
-      id: 5, 
-      name: 'Costellinha', 
-      age: '1 ano', 
-      breed: 'Jack Russell Terrier', 
-      type: 'cachorro', 
-      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    },
-    { 
-      id: 6, 
-      name: 'Mingau', 
-      age: '4 anos', 
-      breed: 'Maine Coon', 
-      type: 'gato', 
-      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
-    },
-    { 
-      id: 7, 
-      name: 'Chavina', 
-      age: '2 anos', 
-      breed: 'Welsh Corgi', 
-      type: 'cachorro', 
-      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    },
-    { 
-      id: 8, 
-      name: 'Kiwi', 
-      age: '1 ano', 
-      breed: 'Yorkshire Terrier', 
-      type: 'cachorro', 
-      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    },
-    { 
-      id: 9, 
-      name: 'Juca', 
-      age: '3 anos', 
-      breed: 'Samoyed', 
-      type: 'cachorro', 
-      image: '/lovable-uploads/037a58c8-aba7-450c-806c-511e7c709526.png',
-    },
-    { 
-      id: 10, 
-      name: 'Stitch', 
-      age: '2 anos', 
-      breed: 'European cat', 
-      type: 'gato', 
-      image: '/lovable-uploads/5e66b35f-0ce9-4475-96fb-b631be5935f9.png',
-    },
-  ];
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchPets();
+  }, []);
+
+  const fetchPets = async () => {
+    try {
+      const data = await petService.getAllPets();
+      setPets(data);
+    } catch (error) {
+      console.error('Erro ao buscar pets:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível carregar os pets.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeletePet = async () => {
+    if (!selectedPet) return;
+
+    try {
+      await petService.deletePet(selectedPet._id);
+      toast({
+        title: "Sucesso",
+        description: "Pet excluído com sucesso.",
+      });
+      setShowDeleteDialog(false);
+      fetchPets();
+    } catch (error) {
+      console.error('Erro ao excluir pet:', error);
+      toast({
+        title: "Erro",
+        description: "Não foi possível excluir o pet.",
+        variant: "destructive",
+      });
+    }
+  };
 
   // Filtrando os pets
   const filteredPets = pets.filter(pet => {
     const matchesSearch = searchTerm === '' || 
       pet.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      pet.breed.toLowerCase().includes(searchTerm.toLowerCase());
+      (pet.breed && pet.breed.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const matchesType = animalType === 'todos' || pet.type === animalType;
+    const matchesType = animalType === 'todos' || 
+      (animalType === 'cachorro' && pet.species.toLowerCase().includes('cachorro')) ||
+      (animalType === 'gato' && pet.species.toLowerCase().includes('gato'));
     
     return matchesSearch && matchesType;
   });
 
   return (
     <EmployeeLayout>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold mb-6">Ver Pets</h1>
+      <div className="w-full bg-white rounded-xl p-6 shadow-sm">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold text-amber-800">Ver Pets</h1>
+          <Button 
+            onClick={() => navigate('/funcionario/cadastrar-pet')}
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
+            Cadastrar Novo Pet
+          </Button>
+        </div>
         
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <div className="relative flex-grow">
@@ -149,20 +126,84 @@ const EmployeePets = () => {
             </Button>
           </div>
         </div>
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-        {filteredPets.map(pet => (
-          <EmployeePetCard 
-            key={pet.id}
-            id={pet.id}
-            name={pet.name}
-            breed={pet.breed}
-            age={pet.age}
-            image={pet.image}
-            onEditClick={() => navigate(`/funcionario/editar-pet/${pet.id}`)}
-          />
-        ))}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredPets.map(pet => (
+            <div key={pet._id} className="bg-white rounded-lg shadow-sm border border-amber-100 overflow-hidden">
+              <div className="relative h-48">
+                <img
+                  src={pet.photos[0] ? `http://localhost:3000${pet.photos[0]}` : '/placeholder-pet.jpg'}
+                  alt={pet.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-2 right-2 flex gap-2">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="bg-white/80 hover:bg-white"
+                    onClick={() => navigate(`/funcionario/editar-pet/${pet._id}`)}
+                  >
+                    <Pencil size={16} className="text-amber-600" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="bg-white/80 hover:bg-white"
+                    onClick={() => {
+                      setSelectedPet(pet);
+                      setShowDeleteDialog(true);
+                    }}
+                  >
+                    <Trash2 size={16} className="text-red-600" />
+                  </Button>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-lg text-amber-800">{pet.name}</h3>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>{pet.breed || 'Sem raça definida'}</p>
+                  <p>{pet.age ? `${pet.age} anos` : 'Idade não informada'}</p>
+                  <p className="capitalize">{pet.gender}</p>
+                  <p className="capitalize">{pet.size}</p>
+                </div>
+                <div className="mt-2">
+                  <span className={`px-2 py-1 rounded-full text-xs ${
+                    pet.status === 'disponível' ? 'bg-green-100 text-green-800' :
+                    pet.status === 'em processo de adoção' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-gray-100 text-gray-800'
+                  }`}>
+                    {pet.status}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Excluir Pet</DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja excluir o pet {selectedPet?.name}? Esta ação não pode ser desfeita.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button 
+                variant="outline" 
+                onClick={() => setShowDeleteDialog(false)}
+              >
+                Cancelar
+              </Button>
+              <Button 
+                variant="destructive"
+                onClick={handleDeletePet}
+              >
+                Excluir
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </EmployeeLayout>
   );

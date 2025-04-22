@@ -1,10 +1,15 @@
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogOut, PlusCircle, FileText, Eye, Settings } from "lucide-react";
+import { LogOut, PlusCircle, FileText, Eye, Settings, Home, User } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface EmployeeLayoutProps {
   children: React.ReactNode;
@@ -17,6 +22,10 @@ const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({ children }) => {
 
   const handleLogout = () => {
     logout();
+    navigate("/");
+  };
+
+  const handleGoHome = () => {
     navigate("/");
   };
 
@@ -197,6 +206,14 @@ const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({ children }) => {
           </Sheet>
 
           <div className="flex items-center gap-2 md:ml-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleGoHome}
+              className="hover:bg-primary-dark"
+            >
+              <Home className="h-5 w-5 text-primary-text" />
+            </Button>
             <h1 className="text-primary-text font-medium">
               {user?.name || "Funcionário"}
             </h1>
@@ -239,9 +256,21 @@ const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({ children }) => {
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </button>
-            <div className="h-8 w-8 rounded-full bg-primary-dark flex items-center justify-center text-primary-text">
-              {user?.name?.charAt(0) || "U"}
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                  <div className="h-8 w-8 rounded-full bg-primary-dark flex items-center justify-center text-primary-text">
+                    {user?.name?.charAt(0) || "U"}
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56" align="end">
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  <span>Sair</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </header>
 
