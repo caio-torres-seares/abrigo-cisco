@@ -62,11 +62,6 @@ export function Login() {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Lado esquerdo */}
       <div className="bg-secondary/60 w-full md:w-1/2 p-10 flex flex-col justify-center items-center relative">
-        <Link to="/" className="absolute top-8 left-8 flex items-center gap-2">
-          <img src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png" alt="Logo" className="w-6 h-6" />
-          <span className="font-medium">Abrigo Cisco</span>
-        </Link>
-
         <div className="max-w-md mx-auto text-center md:text-left mt-16 md:mt-0">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">
             A Felicidade<br />Começa Aqui
