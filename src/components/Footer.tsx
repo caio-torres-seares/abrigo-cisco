@@ -2,6 +2,8 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Instagram, Facebook, Github, ArrowRight } from "lucide-react";
 import GatoImg from '../assets/images/GatoSemFundo.png'
+import PataImg from '../assets/images/pataSemFundo.png'
+
 
 const Footer = () => {
   const navigate = useNavigate();
@@ -11,9 +13,18 @@ const Footer = () => {
         {/* CTA Section */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-8 mb-12">
           <div className="text-center md:text-left">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
-              Pronto para encontrar seu amigo?
-            </h2>
+          <div className="relative mb-24 max-w-md mx-auto w-full h-[140px] md:h-[180px]">
+          {/* Pata como fundo */}
+          <img
+            src={PataImg}
+            alt=""
+            className="absolute top-1/2 left-1/2 w-[140px] h-[140px] md:w-[180px] md:h-[180px] -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+          />
+          {/* Texto em primeiro plano */}
+          <h2 className="relative z-10 text-2xl md:text-3xl font-bold text-primary-text flex items-center justify-center h-full text-center">
+            Seu melhor amigo está a uma busca de distância!
+          </h2>
+        </div>
           
             <button
               onClick={() => {
