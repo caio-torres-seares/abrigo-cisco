@@ -5,6 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import EntrarImg from   '../assets/images/EntrarSemFundo.png'
+import PataImg from   '../assets/images/pataSemFundo.png'
 
 const Cadastro = () => {
   const [showPassword, setShowPassword] = useState(false);
