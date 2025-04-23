@@ -4,26 +4,55 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 
 export function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
+  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setLoading(true);
 
     try {
       await login(email, password);
       const from = location.state?.from?.pathname || '/';
       navigate(from, { replace: true });
-    } catch (err) {
-      setError('Email ou senha inválidos');
+    } catch (error: unknown) {
+      let errorMessage = "Erro ao fazer login. Tente novamente.";
+      
+      if (error instanceof Error) {
+        // Verifica se é um erro de resposta da API
+        if ('response' in error) {
+          const apiError = error as { response?: { data?: { message?: string } } };
+          if (apiError.response?.data?.message) {
+            errorMessage = apiError.response.data.message;
+          }
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      // Mensagens específicas para erros comuns
+      if (errorMessage.includes('Email ou senha inválidos')) {
+        errorMessage = "Email ou senha incorretos. Por favor, verifique suas credenciais.";
+      } else if (errorMessage.includes('Email inválido')) {
+        errorMessage = "Por favor, insira um email válido.";
+      }
+        
+      toast({
+        title: "Erro",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -31,6 +60,10 @@ export function Login() {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Lado esquerdo */}
       <div className="bg-secondary/60 w-full md:w-1/2 p-10 flex flex-col justify-center items-center relative">
+        <Link to="/" className="absolute top-8 left-8 flex items-center gap-2">
+          <img src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png" alt="Logo" className="w-6 h-6" />
+          <span className="font-medium">Abrigo Cisco</span>
+        </Link>
 
         <div className="max-w-md mx-auto text-center md:text-left mt-16 md:mt-0">
           <h1 className="text-3xl md:text-4xl font-bold mb-6">
@@ -94,6 +127,7 @@ export function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="seu@email.com"
                 required
+                disabled={loading}
               />
             </div>
 
@@ -108,25 +142,27 @@ export function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
 
-            <Button type="submit" className="w-full py-6 rounded-full bg-[#C8A687] hover:bg-[#B89574] text-white">
-              Entrar
+            <Button 
+              type="submit" 
+              className="w-full py-6 rounded-full bg-[#C8A687] hover:bg-[#B89574] text-white"
+              disabled={loading}
+            >
+              {loading ? "Entrando..." : "Entrar"}
             </Button>
           </form>
-
-          {error && (
-            <p className="text-red-500 text-sm text-center mt-4">{error}</p>
-          )}
 
           <p className="text-center mt-6 text-sm">
             Não tem uma conta?{' '}

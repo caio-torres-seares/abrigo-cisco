@@ -38,7 +38,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error('Erro ao carregar usuário:', error);
-      authService.logout();
+      // Não limpa os dados automaticamente
+      // localStorage.removeItem('token');
+      // localStorage.removeItem('user');
+      // setUser(null);
     } finally {
       setLoading(false);
     }
