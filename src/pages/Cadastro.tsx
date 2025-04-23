@@ -1,22 +1,81 @@
-
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import EntrarImg from '../assets/images/EntrarSemFundo.png';
-import PataImg from '../assets/images/pataSemFundo.png';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Cadastro = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { register } = useAuth();
 
-  const handleCadastro = (e: React.FormEvent) => {
+  const handleCadastro = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Implemente a lógica de cadastro aqui
-    console.log('Cadastro com:', nome, email, password);
+    setLoading(true);
+
+    // Validação da senha antes de enviar
+    if (password.length < 6) {
+      toast({
+        title: "Erro",
+        description: "A senha deve ter no mínimo 6 caracteres",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      // Faz o cadastro usando a função do contexto
+      await register(nome, email, password);
+
+      toast({
+        title: "Sucesso!",
+        description: "Conta criada com sucesso. Você será redirecionado para a página inicial.",
+      });
+
+      // Redireciona para a página inicial após 2 segundos
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
+    } catch (error: unknown) {
+      let errorMessage = "Erro ao criar conta. Tente novamente.";
+      
+      if (error instanceof Error) {
+        // Verifica se é um erro de resposta da API
+        if ('response' in error) {
+          const apiError = error as { response?: { data?: { message?: string } } };
+          if (apiError.response?.data?.message) {
+            errorMessage = apiError.response.data.message;
+          }
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      // Mensagens específicas para erros comuns
+      if (errorMessage.includes('Email já cadastrado')) {
+        errorMessage = "Este email já está cadastrado. Por favor, use outro email ou faça login.";
+      } else if (errorMessage.includes('Email inválido')) {
+        errorMessage = "Por favor, insira um email válido.";
+      } else if (errorMessage.includes('senha')) {
+        errorMessage = "A senha deve ter no mínimo 6 caracteres.";
+      }
+        
+      toast({
+        title: "Erro",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -86,6 +145,7 @@ const Cadastro = () => {
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
             
@@ -99,6 +159,7 @@ const Cadastro = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                disabled={loading}
               />
             </div>
             
@@ -113,19 +174,25 @@ const Cadastro = () => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                   onClick={() => setShowPassword(!showPassword)}
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
             </div>
             
-            <Button type="submit" className="w-full py-6 rounded-full bg-[#C8A687] hover:bg-[#B89574] text-white">
-              Confirmar
+            <Button 
+              type="submit" 
+              className="w-full py-6 rounded-full bg-[#C8A687] hover:bg-[#B89574] text-white"
+              disabled={loading}
+            >
+              {loading ? "Criando conta..." : "Confirmar"}
             </Button>
           </form>
           
