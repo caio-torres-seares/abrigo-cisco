@@ -126,11 +126,16 @@ const PetDetails = () => {
         setShowSuccessDialog(true);
       } catch (error) {
         console.error('Erro ao criar solicitação de adoção:', error);
-        toast({
-          title: "Erro",
-          description: "Não foi possível criar a solicitação de adoção. Tente novamente.",
-          variant: "destructive",
-        });
+        
+        if (error.response?.data?.code === 'PROFILE_REQUIRED') {
+          setShowProfileModal(true);
+        } else {
+          toast({
+            title: "Erro",
+            description: error.response?.data?.message || "Não foi possível criar a solicitação de adoção. Tente novamente.",
+            variant: "destructive",
+          });
+        }
       }
     }
   };
@@ -233,26 +238,6 @@ const PetDetails = () => {
                 <div className="md:col-span-2">
                   <p className="text-sm font-medium">Status:</p>
                   <p>{pet.status}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm font-medium">Saúde:</p>
-                  <p>{pet.health}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm font-medium">Temperamento:</p>
-                  <p>{pet.temperament}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm font-medium">Convive bem com:</p>
-                  <p>{pet.goodWith}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm font-medium">Treinamento:</p>
-                  <p>{pet.training}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm font-medium">História:</p>
-                  <p>{pet.history}</p>
                 </div>
               </div>
               

@@ -22,7 +22,8 @@ module.exports = async (req, res, next) => {
       return res.status(401).json({ message: 'Usuário não encontrado' });
     }
 
-    req.user = decoded;
+    // Define o usuário completo na requisição
+    req.user = user;
     next();
   } catch (error) {
     console.error('Erro na autenticação:', error);

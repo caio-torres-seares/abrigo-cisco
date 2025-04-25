@@ -1,6 +1,7 @@
 const Adoption = require('../models/Adoption');
 const Pet = require('../models/Pet');
 const User = require('../models/User');
+const ProfileAnalysis = require('../models/ProfileAnalysis');
 
 // Listar todas as adoções
 exports.listAdoptions = async (req, res) => {
@@ -19,7 +20,7 @@ exports.listAdoptions = async (req, res) => {
 // Listar adoções do usuário atual
 exports.listUserAdoptions = async (req, res) => {
   try {
-    const adoptions = await Adoption.find({ user: req.user.userId })
+    const adoptions = await Adoption.find({ user: req.user._id })
       .populate('pet', 'name species breed age gender size photos status')
       .populate('user', 'name email phone');
 
@@ -46,10 +47,19 @@ exports.requestAdoption = async (req, res) => {
       return res.status(400).json({ message: 'Este pet não está disponível para adoção' });
     }
 
+    // Verifica se o usuário tem um perfil completo
+    const userProfile = await ProfileAnalysis.findOne({ userId: req.user._id });
+    if (!userProfile || !userProfile.isComplete) {
+      return res.status(400).json({ 
+        message: 'Você precisa completar seu perfil antes de solicitar uma adoção',
+        code: 'PROFILE_REQUIRED'
+      });
+    }
+
     // Verifica se já existe uma solicitação pendente para este pet
     const existingAdoption = await Adoption.findOne({
       pet,
-      user: req.user.userId,
+      user: req.user._id,
       status: 'pendente'
     });
 
@@ -60,7 +70,7 @@ exports.requestAdoption = async (req, res) => {
     // Cria a solicitação de adoção
     const adoption = new Adoption({
       pet,
-      user: req.user.userId,
+      user: req.user._id,
       notes,
       status: 'pendente'
     });
@@ -138,7 +148,7 @@ exports.cancelAdoption = async (req, res) => {
     }
 
     // Verifica se o usuário é o dono da solicitação ou um funcionário
-    if (adoption.user.toString() !== req.user.userId && !req.user.isEmployee) {
+    if (adoption.user.toString() !== req.user._id && !req.user.isEmployee) {
       return res.status(403).json({ message: 'Você não tem permissão para cancelar esta adoção' });
     }
 

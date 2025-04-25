@@ -8,12 +8,14 @@ const path = require('path');
 require('./models/User');
 require('./models/Pet');
 require('./models/Adoption');
+require('./models/ProfileAnalysis');
 
 // Importando as rotas
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const petRoutes = require('./routes/petRoutes');
 const adoptionRoutes = require('./routes/adoptionRoutes');
+const profileAnalysisRoutes = require('./routes/profileAnalysisRoutes');
 
 // Carregando variáveis de ambiente
 dotenv.config();
@@ -60,6 +62,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/adoptions', adoptionRoutes);
+app.use('/api/profile-analysis', profileAnalysisRoutes);
 
 // Rota de teste
 app.get('/', (req, res) => {

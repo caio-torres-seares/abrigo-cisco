@@ -32,16 +32,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function loadUser() {
     try {
-      if (authService.isAuthenticated()) {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        setUser(JSON.parse(storedUser));
+      } else if (authService.isAuthenticated()) {
         const userData = await authService.getCurrentUser();
         setUser(userData);
       }
     } catch (error) {
       console.error('Erro ao carregar usuário:', error);
-      // Não limpa os dados automaticamente
-      // localStorage.removeItem('token');
-      // localStorage.removeItem('user');
-      // setUser(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
     } finally {
       setLoading(false);
     }

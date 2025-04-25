@@ -40,7 +40,7 @@ const formSchema = z.object({
 type ProfileFormData = z.infer<typeof formSchema>;
 
 const ProfileForm = () => {
-  const { profile, updateProfile } = useProfile();
+  const { profile, updateProfile, loading, error } = useProfile();
   const { toast } = useToast();
   const navigate = useNavigate();
   
@@ -80,18 +80,26 @@ const ProfileForm = () => {
     setValue('housingType', capitalizedValue);
   };
 
-  const onSubmit = (data: ProfileFormData) => {
-    updateProfile({
-      ...data,
-      isComplete: true
-    } as ProfileFormData & { isComplete: boolean });
-    
-    toast({
-      title: "Perfil atualizado",
-      description: "Suas informações foram salvas com sucesso.",
-    });
-    
-    navigate(-1);
+  const onSubmit = async (data: ProfileFormData) => {
+    try {
+      await updateProfile({
+        ...data,
+        isComplete: true
+      } as ProfileFormData & { isComplete: boolean });
+      
+      toast({
+        title: "Perfil atualizado",
+        description: "Suas informações foram salvas com sucesso.",
+      });
+      
+      navigate(-1);
+    } catch (err) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível salvar suas informações. Tente novamente.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleCancel = () => {
@@ -100,7 +108,6 @@ const ProfileForm = () => {
 
   return (
     <div className="min-h-screen flex flex-col">
-      
       <main className="flex-grow py-6 px-4 md:px-8 max-w-3xl mx-auto w-full">
         <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100 p-6 md:p-8">
           <h1 className="text-2xl md:text-3xl font-bold mb-2 text-center">Formulário de Análise de Perfil</h1>
@@ -108,6 +115,12 @@ const ProfileForm = () => {
             Faremos algumas perguntas para analisar seu perfil como adotante.
             Por favor, responda com honestidade e responsabilidade!
           </p>
+          
+          {error && (
+            <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
           
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -127,6 +140,7 @@ const ProfileForm = () => {
                             setValue('monthlyIncome', `R$ ${field.value}`);
                           }
                         }}
+                        disabled={loading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -145,6 +159,7 @@ const ProfileForm = () => {
                         placeholder="Ex: Apartamento, Casa, etc." 
                         {...field}
                         onChange={handleHousingTypeChange}
+                        disabled={loading}
                       />
                     </FormControl>
                     <FormMessage />
@@ -159,7 +174,13 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Quantos cômodos existem na sua moradia?*</FormLabel>
                     <FormControl>
-                      <Input type="number" min={1} {...field} onChange={e => setValue('roomsCount', parseInt(e.target.value))} />
+                      <Input 
+                        type="number" 
+                        min={1} 
+                        {...field} 
+                        onChange={e => setValue('roomsCount', parseInt(e.target.value))}
+                        disabled={loading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -177,6 +198,7 @@ const ProfileForm = () => {
                         onValueChange={value => setValue('hasPets', value === 'true')}
                         value={field.value?.toString()}
                         className="flex flex-col space-y-1"
+                        disabled={loading}
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
@@ -208,7 +230,8 @@ const ProfileForm = () => {
                         <Textarea 
                           placeholder="Descreva sua experiência com animais de estimação" 
                           className="resize-none" 
-                          {...field} 
+                          {...field}
+                          disabled={loading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -228,6 +251,7 @@ const ProfileForm = () => {
                         onValueChange={value => setValue('hasChildren', value === 'true')}
                         value={field.value?.toString()}
                         className="flex flex-col space-y-1"
+                        disabled={loading}
                       >
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
@@ -261,6 +285,7 @@ const ProfileForm = () => {
                           min={0} 
                           {...field} 
                           onChange={e => setValue('childrenCount', parseInt(e.target.value))}
+                          disabled={loading}
                         />
                       </FormControl>
                       <FormMessage />
@@ -276,7 +301,11 @@ const ProfileForm = () => {
                   <FormItem>
                     <FormLabel>Quantas horas por dia serão disponibilizadas para seu pet?*</FormLabel>
                     <FormControl>
-                      <Input placeholder="Ex: 4 horas" {...field} />
+                      <Input 
+                        placeholder="Ex: 4 horas" 
+                        {...field}
+                        disabled={loading}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -289,21 +318,22 @@ const ProfileForm = () => {
                   variant="outline" 
                   onClick={handleCancel}
                   className="bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 border-none"
+                  disabled={loading}
                 >
                   Cancelar
                 </Button>
                 <Button 
                   type="submit"
                   className="bg-green-500 hover:bg-green-600 text-white"
+                  disabled={loading}
                 >
-                  Salvar
+                  {loading ? 'Salvando...' : 'Salvar'}
                 </Button>
               </div>
             </form>
           </Form>
         </div>
       </main>
-      
     </div>
   );
 };
