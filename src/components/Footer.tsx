@@ -80,7 +80,7 @@ const Footer = () => {
             <Facebook size={20} />
           </a>
           <a
-            href="https://github.com/caio-torres-seares/pet-finder-amigo-project"
+            href="https://github.com/caio-torres-seares/abrigo-cisco"
             target="_blank"
             rel="noopener noreferrer"
             className="bg-background p-2 rounded-full hover:bg-primary hover:text-white transition-colors"
