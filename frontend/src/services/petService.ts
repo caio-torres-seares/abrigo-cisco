@@ -42,6 +42,11 @@ export interface UpdatePetData {
 export const petService = {
   async getAllPets(): Promise<Pet[]> {
     const response = await api.get<Pet[]>('/pets');
+    return response.data;
+  },
+
+  async getAvailablePets(): Promise<Pet[]> {
+    const response = await api.get<Pet[]>('/pets');
     return response.data.filter(pet => pet.status !== 'adotado');
   },
 

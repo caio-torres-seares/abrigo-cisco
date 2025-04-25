@@ -17,7 +17,7 @@ const Pets = () => {
     const fetchPets = async () => {
       try {
         setLoading(true);
-        const data = await petService.getAllPets();
+        const data = await petService.getAvailablePets();
         setPets(data);
         setError(null);
       } catch (err) {
