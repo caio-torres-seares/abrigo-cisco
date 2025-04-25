@@ -1,73 +1,119 @@
-# Welcome to your Lovable project
+# 🐾 Pet Finder Amigo - Sistema de Adoção de Pets
 
-## Project info
+Um sistema completo para adoção de pets, desenvolvido com React, Node.js e MongoDB. O projeto foi criado com a ajuda do [Lovable](https://lovable.dev) para o design das interfaces.
 
-**URL**: https://lovable.dev/projects/54e7dfb4-245b-4cd8-b47d-e4a0d8781f0d
+## 🚀 Tecnologias Utilizadas
 
-## How can I edit this code?
+### Frontend
+- React
+- TypeScript
+- Tailwind CSS
+- Vite
+- React Router
+- Axios
+- React Hook Form
+- Zod
 
-There are several ways of editing your application.
+### Backend
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- JWT Authentication
 
-**Use Lovable**
+## 📋 Pré-requisitos
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/54e7dfb4-245b-4cd8-b47d-e4a0d8781f0d) and start prompting.
+- Node.js (versão 14 ou superior)
+- MongoDB (instalado localmente ou MongoDB Atlas)
+- NPM ou Yarn
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🔧 Instalação
 
-**Use your preferred IDE**
+### Backend
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. Entre na pasta do backend:
+```bash
+cd backend
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+2. Instale as dependências:
+```bash
+npm install
+```
 
-Follow these steps:
+3. Configure as variáveis de ambiente:
+- Crie um arquivo `.env` na raiz do backend
+- Adicione as seguintes variáveis:
+```
+PORT=3000
+MONGODB_URI=sua_url_do_mongodb
+JWT_SECRET=seu_segredo_jwt
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+4. Inicie o servidor:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+O servidor estará rodando em `http://localhost:3000`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Frontend
 
-**Use GitHub Codespaces**
+1. Entre na pasta do frontend:
+```bash
+cd frontend
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+2. Instale as dependências:
+```bash
+npm install
+```
 
-## What technologies are used for this project?
+3. Inicie o servidor de desenvolvimento:
+```bash
+npm run dev
+```
 
-This project is built with:
+O frontend estará rodando em `http://localhost:5173`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🌟 Funcionalidades
 
-## How can I deploy this project?
+- Cadastro e autenticação de usuários
+- Perfil de usuário com informações para adoção
+- Listagem de pets disponíveis para adoção
+- Detalhes completos de cada pet
+- Sistema de solicitação de adoção
+- Painel administrativo para funcionários
+- Gerenciamento de status de adoções
+- Upload de fotos de pets
 
-Simply open [Lovable](https://lovable.dev/projects/54e7dfb4-245b-4cd8-b47d-e4a0d8781f0d) and click on Share -> Publish.
+## 👥 Perfis de Usuário
 
-## Can I connect a custom domain to my Lovable project?
+### Usuário Comum
+- Visualizar pets disponíveis
+- Solicitar adoção
+- Gerenciar perfil
+- Acompanhar solicitações
 
-Yes it is!
+### Funcionário
+- Gerenciar pets
+- Aprovar/rejeitar solicitações
+- Cadastrar novos pets
+- Editar informações de pets
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🎨 Design
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+O design do projeto foi desenvolvido com a ajuda do [Lovable](https://lovable.dev), uma plataforma que oferece componentes e interfaces modernas para aplicações web.
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👨‍💻 Desenvolvido por
+
+[Seu Nome] - [Seu GitHub]
+
+## 🙏 Agradecimentos
+
+- [Lovable](https://lovable.dev) pelo design das interfaces
+- Todos os contribuidores do projeto
