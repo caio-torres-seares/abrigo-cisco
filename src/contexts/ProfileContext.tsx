@@ -40,7 +40,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
   useEffect(() => {
     // Carregar o perfil do localStorage quando o usuário fizer login
     if (user) {
-      const storedProfile = localStorage.getItem(`profile_${user.id}`);
+      const storedProfile = localStorage.getItem(`profile_${user.email}`);
       if (storedProfile) {
         setProfile(JSON.parse(storedProfile));
       } else {
@@ -55,7 +55,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (user) {
       const updatedProfile = { ...profile, ...data };
       setProfile(updatedProfile);
-      localStorage.setItem(`profile_${user.id}`, JSON.stringify(updatedProfile));
+      localStorage.setItem(`profile_${user.email}`, JSON.stringify(updatedProfile));
     }
   };
 
