@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Adoption } from '@/types/adoption';
 import { adoptionService } from '@/services/adoptionService';
+import AdoptionDetailsModal from '@/components/AdoptionDetailsModal';
 import {
   Dialog,
   DialogContent,
@@ -20,6 +21,7 @@ const AdoptionRequests = () => {
   const [requests, setRequests] = useState<Adoption[]>([]);
   const [selectedRequest, setSelectedRequest] = useState<Adoption | null>(null);
   const [showAnalysisDialog, setShowAnalysisDialog] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -43,6 +45,11 @@ const AdoptionRequests = () => {
   const handleAnalyzeRequest = (request: Adoption) => {
     setSelectedRequest(request);
     setShowAnalysisDialog(true);
+  };
+
+  const handleViewDetails = (request: Adoption) => {
+    setSelectedRequest(request);
+    setShowDetailsModal(true);
   };
 
   const handleUpdateStatus = async (status: 'aprovada' | 'rejeitada') => {
@@ -108,7 +115,14 @@ const AdoptionRequests = () => {
                     <TableCell className="font-medium">{request.pet.name}</TableCell>
                     <TableCell>{request.user.name}</TableCell>
                     <TableCell>{formatDate(request.createdAt)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right space-x-2">
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => handleViewDetails(request)}
+                      >
+                        Ver Detalhes
+                      </Button>
                       <Button 
                         size="sm" 
                         className="bg-green-500 hover:bg-green-600 text-white"
@@ -152,10 +166,10 @@ const AdoptionRequests = () => {
                     <TableCell className="text-right">
                       <Button 
                         size="sm" 
-                        className="bg-green-500 hover:bg-green-600 text-white"
-                        onClick={() => handleAnalyzeRequest(request)}
+                        variant="outline"
+                        onClick={() => handleViewDetails(request)}
                       >
-                        Visualizar
+                        Ver Detalhes
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -212,6 +226,12 @@ const AdoptionRequests = () => {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <AdoptionDetailsModal
+          isOpen={showDetailsModal}
+          onClose={() => setShowDetailsModal(false)}
+          adoption={selectedRequest}
+        />
       </div>
     </EmployeeLayout>
   );

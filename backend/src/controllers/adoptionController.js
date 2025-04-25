@@ -10,7 +10,19 @@ exports.listAdoptions = async (req, res) => {
       .populate('pet', 'name species breed age gender size photos status')
       .populate('user', 'name email phone');
 
-    res.json(adoptions);
+    // Buscar os perfis de análise para cada adoção
+    const adoptionsWithProfiles = await Promise.all(adoptions.map(async (adoption) => {
+      const profile = await ProfileAnalysis.findOne({ userId: adoption.user._id });
+      return {
+        ...adoption.toObject(),
+        user: {
+          ...adoption.user.toObject(),
+          profile
+        }
+      };
+    }));
+
+    res.json(adoptionsWithProfiles);
   } catch (error) {
     console.error('Erro ao listar adoções:', error);
     res.status(500).json({ message: 'Erro ao listar adoções', error: error.message });
@@ -24,7 +36,19 @@ exports.listUserAdoptions = async (req, res) => {
       .populate('pet', 'name species breed age gender size photos status')
       .populate('user', 'name email phone');
 
-    res.json(adoptions);
+    // Buscar o perfil de análise do usuário
+    const profile = await ProfileAnalysis.findOne({ userId: req.user._id });
+
+    // Adicionar o perfil a cada adoção
+    const adoptionsWithProfile = adoptions.map(adoption => ({
+      ...adoption.toObject(),
+      user: {
+        ...adoption.user.toObject(),
+        profile
+      }
+    }));
+
+    res.json(adoptionsWithProfile);
   } catch (error) {
     console.error('Erro ao listar adoções do usuário:', error);
     res.status(500).json({ message: 'Erro ao listar adoções', error: error.message });
@@ -81,7 +105,21 @@ exports.requestAdoption = async (req, res) => {
     petExists.status = 'em processo de adoção';
     await petExists.save();
 
-    res.status(201).json(adoption);
+    // Busca a adoção criada com os dados populados
+    const populatedAdoption = await Adoption.findById(adoption._id)
+      .populate('pet', 'name species breed age gender size photos status')
+      .populate('user', 'name email phone');
+
+    // Adiciona o perfil do usuário
+    const adoptionWithProfile = {
+      ...populatedAdoption.toObject(),
+      user: {
+        ...populatedAdoption.user.toObject(),
+        profile: userProfile
+      }
+    };
+
+    res.status(201).json(adoptionWithProfile);
   } catch (error) {
     console.error('Erro ao solicitar adoção:', error);
     res.status(500).json({ message: 'Erro ao solicitar adoção', error: error.message });
@@ -129,7 +167,19 @@ exports.updateAdoptionStatus = async (req, res) => {
       .populate('pet', 'name species breed age gender size photos status')
       .populate('user', 'name email phone');
 
-    res.json(updatedAdoption);
+    // Busca o perfil do usuário
+    const userProfile = await ProfileAnalysis.findOne({ userId: updatedAdoption.user._id });
+
+    // Adiciona o perfil à resposta
+    const adoptionWithProfile = {
+      ...updatedAdoption.toObject(),
+      user: {
+        ...updatedAdoption.user.toObject(),
+        profile: userProfile
+      }
+    };
+
+    res.json(adoptionWithProfile);
   } catch (error) {
     console.error('Erro ao atualizar status da adoção:', error);
     res.status(500).json({ message: 'Erro ao atualizar status da adoção', error: error.message });
@@ -168,7 +218,19 @@ exports.cancelAdoption = async (req, res) => {
       .populate('pet', 'name species breed age gender size photos status')
       .populate('user', 'name email phone');
 
-    res.json(updatedAdoption);
+    // Busca o perfil do usuário
+    const userProfile = await ProfileAnalysis.findOne({ userId: updatedAdoption.user._id });
+
+    // Adiciona o perfil à resposta
+    const adoptionWithProfile = {
+      ...updatedAdoption.toObject(),
+      user: {
+        ...updatedAdoption.user.toObject(),
+        profile: userProfile
+      }
+    };
+
+    res.json(adoptionWithProfile);
   } catch (error) {
     console.error('Erro ao cancelar adoção:', error);
     res.status(500).json({ message: 'Erro ao cancelar adoção', error: error.message });
