@@ -1,4 +1,4 @@
-# 🐾 Pet Finder Amigo - Sistema de Adoção de Pets
+# 🐾 Abrigo Cisco - Sistema de Adoção de Pets
 
 Um sistema completo para adoção de pets, desenvolvido com React, Node.js e MongoDB. O projeto foi criado com a ajuda do [Lovable](https://lovable.dev) para o design das interfaces.
 
@@ -74,7 +74,7 @@ npm install
 npm run dev
 ```
 
-O frontend estará rodando em `http://localhost:5173`
+O frontend estará rodando em `http://localhost:8080`
 
 ## 🌟 Funcionalidades
 
