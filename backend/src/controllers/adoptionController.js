@@ -114,7 +114,12 @@ exports.updateAdoptionStatus = async (req, res) => {
       await pet.save();
     }
 
-    res.json(adoption);
+    // Busca a adoção atualizada com o pet populado
+    const updatedAdoption = await Adoption.findById(id)
+      .populate('pet', 'name species breed age gender size photos status')
+      .populate('user', 'name email phone');
+
+    res.json(updatedAdoption);
   } catch (error) {
     console.error('Erro ao atualizar status da adoção:', error);
     res.status(500).json({ message: 'Erro ao atualizar status da adoção', error: error.message });
@@ -148,7 +153,12 @@ exports.cancelAdoption = async (req, res) => {
       await pet.save();
     }
 
-    res.json(adoption);
+    // Busca a adoção atualizada com o pet populado
+    const updatedAdoption = await Adoption.findById(id)
+      .populate('pet', 'name species breed age gender size photos status')
+      .populate('user', 'name email phone');
+
+    res.json(updatedAdoption);
   } catch (error) {
     console.error('Erro ao cancelar adoção:', error);
     res.status(500).json({ message: 'Erro ao cancelar adoção', error: error.message });

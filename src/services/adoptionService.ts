@@ -43,7 +43,12 @@ export const getUserRequests = async (userId: string): Promise<Adoption[]> => {
 };
 
 export const createAdoptionRequest = async (petId: string, notes?: string): Promise<Adoption> => {
-  const response = await api.post<Adoption>('/adoptions', { pet: petId, notes });
+  const response = await api.post<Adoption>('/adoptions', { 
+    pet: petId,
+    notes,
+    status: 'pendente',
+    user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).id : null
+  });
   return response.data;
 };
 
