@@ -18,6 +18,10 @@
     --primary-dark: #D4B39A;
     --primary-text: #714949;
     --primary-orange: #FA8C01;
+
+    --button-primary: #D3AC92;
+    --button-primary-hover: #c49b7f;
+    --button-text: #FFFFFF;
   }
 }
 
@@ -36,7 +40,7 @@
   }
   
   .btn-primary {
-    @apply bg-primary text-primary-text hover:bg-primary-dark rounded-md transition-colors;
+    @apply bg-[var(--button-primary)] text-[var(--button-text)] hover:bg-[var(--button-primary-hover)] rounded-md transition-colors;
   }
 
   .text-primary-orange {
