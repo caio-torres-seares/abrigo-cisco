@@ -90,7 +90,7 @@ const Navbar = () => {
         ) : (
           <>
             <Link to="/cadastro" className="text-primary-text text-[20px] hover:opacity-80 transition">Criar Conta</Link>
-            <Link to="/login" className="bg-white text-primary text-[20px] hover:bg-gray-100 py-2 px-4 rounded">Entrar</Link>
+            <Link to="/login" className="btn-primary text-[20px] py-2 px-4 rounded">Entrar</Link>
           </>
         )}
       </div>
@@ -143,7 +143,7 @@ const Navbar = () => {
             ) : (
               <>
                 <Link to="/cadastro" className="text-primary-text hover:opacity-80 transition py-2">Criar Conta</Link>
-                <Link to="/login" className="bg-white text-primary hover:bg-gray-100 text-center py-2 rounded">Entrar</Link>
+                <Link to="/login" className="btn-primary text-[20px] py-2 px-4 rounded">Entrar</Link>
               </>
             )}
           </div>
