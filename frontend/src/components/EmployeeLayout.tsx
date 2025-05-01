@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import logoSite from '../assets/images/logoSite.png';
 
 interface EmployeeLayoutProps {
   children: React.ReactNode;
@@ -39,9 +40,9 @@ const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({ children }) => {
             className="flex items-center gap-2 hover:opacity-80 transition"
           >
             <img
-              src="/lovable-uploads/1650603a-590c-4d0a-86e0-f7221c057dc5.png"
+              src={logoSite}
               alt="Logo"
-              className="w-6 h-6"
+              className="w-10 h-8"
             />
             <span className="font-medium text-lg text-primary-text">
               Abrigo Cisco
@@ -258,11 +259,13 @@ const EmployeeLayout: React.FC<EmployeeLayoutProps> = ({ children }) => {
             </button>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                  <div className="h-8 w-8 rounded-full bg-primary-dark flex items-center justify-center text-primary-text">
-                    {user?.name?.charAt(0) || "U"}
-                  </div>
-                </Button>
+              <Button 
+                variant="ghost" 
+                className="relative h-8 w-8 rounded-full p-0 border-0">
+                <div className="h-8 w-8 rounded-full bg-primary-dark flex items-center justify-center text-primary-text text-lg font-medium leading-none">
+                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </div>
+              </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-56" align="end">
                 <DropdownMenuItem onClick={handleLogout}>
