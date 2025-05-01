@@ -70,19 +70,21 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-lg md:max-w-2xl lg:max-w-4xl p-0">
-          <div className="flex flex-col md:flex-row">
-            {pet.photos && pet.photos.length > 0 && (
-              <div className="md:w-1/2 aspect-square md:aspect-auto md:h-auto relative rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
-                <img
-                  src={getImageUrl(pet.photos[0])}
-                  alt={pet.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            )}
+      <DialogContent className="sm:max-w-lg md:max-w-2xl lg:max-w-4xl p-0 max-h-[90vh] overflow-y-auto">
+  <div className="flex flex-col md:flex-row">
+    {/* Seção da imagem */}
+    {pet.photos && pet.photos.length > 0 && (
+      <div className="md:w-1/2 aspect-square relative rounded-t-lg md:rounded-l-lg md:rounded-t-none overflow-hidden">
+        <img
+          src={getImageUrl(pet.photos[0])}
+          alt={pet.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+    )}
 
-            <div className="md:w-1/2 p-4 md:p-6 flex flex-col space-y-4 overflow-y-auto">
+    {/* Seção de conteúdo */}
+    <div className="md:w-1/2 p-4 md:p-6 flex flex-col space-y-4 flex-1">
               <h2 className="font-bold text-2xl lg:text-3xl text-primary-text">{pet.name}</h2>
 
               {pet.description && (
@@ -128,19 +130,23 @@ const PetCard: React.FC<PetCardProps> = ({ pet }) => {
 
               <div className="flex-grow"></div>
 
-              <DialogFooter className="flex gap-2 pt-4 justify-center sm:justify-start">
-                <Button variant="outline" onClick={() => setIsModalOpen(false)} className="flex-shrink-0">
-                  Fechar
-                </Button>
-                <Link to={`/pets/${pet._id}`} className="flex-shrink-0">
-                  <Button className="bg-[#a58a72] hover:bg-[#947a64]">
-                    Ver mais
-                  </Button>
-                </Link>
-              </DialogFooter>
-            </div>
-          </div>
-        </DialogContent>
+              <DialogFooter className="grid grid-cols-2 gap-2 w-full mt-4">
+        <Button 
+          variant="outline" 
+          onClick={() => setIsModalOpen(false)}
+          className="w-full"
+        >
+          Fechar
+        </Button>
+        <Link to={`/pets/${pet._id}`} className="w-full">
+          <Button className="w-full bg-[#a58a72] hover:bg-[#947a64]">
+            Ver mais
+          </Button>
+        </Link>
+      </DialogFooter>
+    </div>
+  </div>
+</DialogContent>
       </Dialog>
     </>
   );
