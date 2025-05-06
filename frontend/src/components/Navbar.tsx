@@ -35,14 +35,14 @@ const Navbar = () => {
 
       {/* Botão do menu mobile */}
       <button 
-        className="md:hidden text-primary-text"
+        className="lg:hidden text-primary-text"
         onClick={() => setIsMenuOpen(!isMenuOpen)}
       >
         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
 
       {/* Navegação para desktop */}
-      <div className="hidden md:flex items-center gap-6">
+      <div className="hidden lg:flex items-center gap-6">
         <Link to="/" className="text-primary-text text-[20px] hover:opacity-80 transition">Início</Link>
         <Link to="/pets" className="text-primary-text text-[20px] hover:opacity-80 transition">Procurar</Link>
         <Link to="/sobre-nos" className="text-primary-text text-[20px] hover:opacity-80 transition">Sobre Nós</Link>
