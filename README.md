@@ -101,19 +101,9 @@ O frontend estará rodando em `http://localhost:8080`
 - Cadastrar novos pets
 - Editar informações de pets
 
-## 🎨 Design
 
-O design do projeto foi desenvolvido com a ajuda do [Lovable](https://lovable.dev), uma plataforma que oferece componentes e interfaces modernas para aplicações web.
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ## 👨‍💻 Desenvolvido por
 
-[Seu Nome] - [Seu GitHub]
-
-## 🙏 Agradecimentos
-
-- [Lovable](https://lovable.dev) pelo design das interfaces
-- Todos os contribuidores do projeto
+Caio Torres Seares                 - https://github.com/caio-torres-seares
+Gabriela Benevides Pereira Marques - https://github.com/gabrielamqs
