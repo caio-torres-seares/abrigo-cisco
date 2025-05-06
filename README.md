@@ -106,4 +106,5 @@ O frontend estará rodando em `http://localhost:8080`
 ## 👨‍💻 Desenvolvido por
 
 Caio Torres Seares                 - https://github.com/caio-torres-seares
+
 Gabriela Benevides Pereira Marques - https://github.com/gabrielamqs
