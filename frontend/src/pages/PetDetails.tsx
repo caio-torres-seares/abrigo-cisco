@@ -4,8 +4,6 @@ import { ArrowLeft, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import Navbar from '@/components/Navbar';
-import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/contexts/ProfileContext';
 import ProfileRequiredModal from '@/components/ProfileRequiredModal';
@@ -141,9 +139,9 @@ const PetDetails = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-orange-50">
       
-      <main className="flex-grow py-6 px-4 md:px-8 max-w-6xl mx-auto w-full">
+      <main className="flex-grow py-6 px-4 md:px-8 max-w-7xl mx-auto w-full">
         <button 
           onClick={() => navigate(-1)}
           className="flex items-center gap-1 mb-4 text-gray-600 hover:text-gray-900"
@@ -152,137 +150,143 @@ const PetDetails = () => {
           <span>Voltar</span>
         </button>
         
-        <div className="bg-white rounded-xl overflow-hidden shadow-md border border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Coluna da esquerda - Foto principal e informações básicas */}
-            <div className="md:col-span-1 bg-amber-200 p-4 flex flex-col">
-              <div className="flex justify-center mb-4">
+        <div className="bg-white rounded-xl overflow-hidden shadow-lg border border-gray-100 p-4 sm:p-6 lg:p-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+            
+            {/* Coluna da Esquerda (LG) */}
+            <div className="lg:col-span-1 flex flex-col gap-6">
+              {/* Imagem Principal */}
+              <div className="bg-yellow-100 rounded-lg p-2">
                 {pet.photos && pet.photos.length > 0 ? (
                   <img 
                     src={getImageUrl(pet.photos[0])} 
                     alt={pet.name} 
-                    className="w-full rounded-lg aspect-square object-cover"
+                    className="w-full rounded-md aspect-square object-cover"
                   />
                 ) : (
-                  <div className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                  <div className="aspect-square bg-gray-200 rounded-md flex items-center justify-center">
                     <span className="text-gray-400">Sem foto</span>
                   </div>
                 )}
               </div>
-              
-              <div className="bg-white rounded-lg p-4 mt-auto">
-                <h1 className="text-2xl font-bold mb-1">{pet.name}</h1>
-                <p className="text-sm text-gray-500 mb-4">Último Atualizacao: 8 de Abril de 2023</p>
-                
-                <div className="flex flex-wrap gap-1 mb-3">
-                  {/* {pet.personality.map((trait, index) => (
-                    <Badge 
-                      key={index} 
-                      className={`
-                        ${index === 0 ? 'bg-primary-light text-primary hover:bg-primary' : ''}
-                        ${index === 1 ? 'bg-orange-100 text-orange-800 hover:bg-orange-200' : ''}
-                        ${index === 2 ? 'bg-pink-100 text-pink-800 hover:bg-pink-200' : ''}
-                      `}
-                    >
-                      {trait}
-                    </Badge>
-                  ))} */}
-                </div>
-                
-                <p className="text-sm mb-4">
-                  {pet.name} é um cachorrinho lindo, carinhoso, mas também muito curioso. 
-                  Ele está pronto para encher um lar com muita alegria, ternura e amor!
-                </p>
-                
-                <div className="flex justify-center gap-2 mt-4">
-                  <Badge className="rounded-full px-4 py-1 bg-red-500 text-white">{pet.gender}</Badge>
-                  <Badge className="rounded-full px-4 py-1 bg-orange-300 text-white">{pet.age}</Badge>
-                  {/* <Badge className="rounded-full px-4 py-1 bg-purple-400 text-white">{pet.weight}</Badge> */}
-                </div>
-              </div>
+
+              {/* Informações do Responsável (Moved here for LG) */}
+              <div className="bg-white rounded-lg shadow border border-gray-100 p-4">
+                 <h2 className="text-lg font-semibold mb-3 text-gray-700">Responsável</h2>
+                 <div className="flex items-center gap-4 mb-3">
+                   <img 
+                     src={caretaker.image} 
+                     alt={caretaker.name} 
+                     className="w-12 h-12 rounded-full object-cover"
+                   />
+                   <div>
+                     <h3 className="font-medium text-gray-800">{caretaker.name}</h3>
+                     {/* Simplified caretaker description */}
+                     <p className="text-sm text-gray-600">
+                       Cuida de {pet.name.toLowerCase()} desde {caretaker.since}.
+                     </p>
+                   </div>
+                 </div>
+                 <p className="text-sm text-gray-600">
+                   {pet.name} foi resgatado das ruas e após cuidados, hoje ele está cheio de energia e espera por um lar cheio de amor.
+                 </p>
+               </div>
             </div>
             
-            {/* Coluna da direita - Detalhes e botão de adoção */}
-            <div className="md:col-span-2 p-6">
-              <h2 className="text-xl font-semibold mb-4">Informações</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-6 mb-6">
-                <div>
-                  <p className="text-sm font-medium">Nome:</p>
-                  <p>{pet.name}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Espécie:</p>
-                  <p>{pet.species}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Raça:</p>
-                  <p>{pet.breed}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Idade:</p>
-                  <p>{pet.age}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Peso:</p>
-                  <p>{pet.weight}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Cor:</p>
-                  <p>{pet.color}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Porte:</p>
-                  <p>{pet.size}</p>
-                </div>
-                <div className="md:col-span-2">
-                  <p className="text-sm font-medium">Status:</p>
-                  <p>{pet.status}</p>
-                </div>
-              </div>
-              
-              <h2 className="text-xl font-semibold mb-4">Imagens</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-6">
-                {additionalImages.map((img, index) => (
-                  <div key={index} className="aspect-square overflow-hidden rounded-md">
-                    <img 
-                      src={img}
-                      alt={`${pet.name} ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
+            {/* Coluna da Direita (LG) */}
+            <div className="lg:col-span-1 flex flex-col gap-6">
+               {/* Nome, Tags e Descrição */}
+               <div>
+                 <div className="flex justify-between items-start mb-2">
+                   <h1 className="text-3xl md:text-4xl font-bold text-gray-800">{pet.name}</h1>
+                   {/* Tags (Example - adapt with real data if available) */}
+                   <div className="flex flex-wrap gap-2 flex-shrink-0 ml-4">
+                     <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200">{pet.species}</Badge>
+                     {pet.breed && <Badge variant="outline" className="bg-orange-100 text-orange-800 border-orange-200">{pet.breed}</Badge>}
+                     {/* Add more tags if needed */}
+                   </div>
+                 </div>
+                 <p className="text-xs text-gray-500 mb-3">Última Atualização: {new Date(pet.updatedAt).toLocaleDateString('pt-BR')}</p>
+                 
+                 {pet.description && <p className="text-gray-600 mb-4">{pet.description}</p>}
+               </div>
+
+               {/* Caixas de Atributos Grandes */}
+               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="bg-red-100 text-red-800 p-3 rounded-lg text-center">
+                      <p className="font-bold text-xl">{pet.gender === 'macho' ? 'Macho' : 'Fêmea'}</p>
+                      <p className="text-xs uppercase tracking-wide">Sexo</p>
                   </div>
-                ))}
-              </div>
-              
-              <div className="border-t pt-4 mt-4">
-                <h2 className="text-xl font-semibold mb-4">Responsável</h2>
-                <div className="flex items-center gap-4 mb-6">
-                  <img 
-                    src={caretaker.image} 
-                    alt={caretaker.name} 
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
-                  <div>
-                    <h3 className="font-medium">{caretaker.name}</h3>
-                    <p className="text-sm text-gray-600">
-                      Cuida {pet.name.toLowerCase()} desde {caretaker.since}
-                    </p>
+                  {pet.age !== undefined && (
+                    <div className="bg-orange-100 text-orange-800 p-3 rounded-lg text-center">
+                      <p className="font-bold text-xl">{pet.age} {pet.age === 1 ? 'Ano' : 'Anos'}</p>
+                      <p className="text-xs uppercase tracking-wide">Idade</p>
+                    </div>
+                  )}
+                  {/* Placeholder for Weight - Add back if data becomes available */}
+                  {/* <div className="bg-purple-100 text-purple-800 p-3 rounded-lg text-center">
+                      <p className="font-bold text-xl">{pet.weight}kg</p> 
+                      <p className="text-xs uppercase tracking-wide">Peso</p>
+                  </div> */}
+               </div>
+
+               {/* Botão de Adoção */}
+               <div className="mt-4">
+                 <Button 
+                   size="lg" 
+                   onClick={handleAdoptionRequest}
+                   className="w-full bg-[#a58a72] hover:bg-[#947a64] text-white font-medium px-8 py-3 rounded-full text-lg"
+                 >
+                   Solicitar Adoção
+                 </Button>
+               </div>
+               
+               {/* Imagens Adicionais */}
+               <div>
+                  <h2 className="text-lg font-semibold mb-3 text-gray-700">Imagens</h2>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                    {/* Assuming pet.photos contains all images including the main one */}
+                    {pet.photos.slice(1).map((img, index) => ( // Start from index 1 if photos[0] is main
+                      <div key={index} className="aspect-square overflow-hidden rounded-md border">
+                        <img 
+                          src={getImageUrl(img)}
+                          alt={`${pet.name} ${index + 2}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ))}
+                    {/* Fallback if only one photo */}
+                    {pet.photos.length <= 1 && additionalImages.slice(0, 4).map((img, index) => (
+                       <div key={`placeholder-${index}`} className="aspect-square overflow-hidden rounded-md border bg-gray-100">
+                        <img 
+                          src={getImageUrl(img)} // Use placeholder images
+                          alt={`Placeholder ${index + 1}`}
+                          className="w-full h-full object-cover opacity-50" // Style placeholder
+                        />
+                       </div>
+                    ))}
                   </div>
-                </div>
-                <p className="text-sm">
-                  Cuida do {pet.name.toLowerCase()} desde {caretaker.since}, durante uma situação de muita fome. Aqui no abrigo recebeu atenção, carinho e hoje está pronto para encontrar e conhecer um lar cheio de amor.
-                </p>
-              </div>
-              
-              <div className="mt-8 flex justify-center">
-                <Button 
-                  size="lg" 
-                  onClick={handleAdoptionRequest}
-                  className="bg-amber-500 hover:bg-amber-600 text-white font-medium px-8 py-6 rounded-full"
-                >
-                  Solicitar Adoção
-                </Button>
-              </div>
+               </div>
+
+               {/* Informações Detalhadas */}
+               <div className="border-t pt-4">
+                 <h2 className="text-lg font-semibold mb-3 text-gray-700">Informações Detalhadas</h2>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 text-sm">
+                   <div><strong className="font-medium text-gray-600">Nome:</strong> {pet.name}</div>
+                   <div><strong className="font-medium text-gray-600">Espécie:</strong> {pet.species}</div>
+                   {pet.breed && <div><strong className="font-medium text-gray-600">Raça:</strong> {pet.breed}</div>}
+                   {pet.age !== undefined && <div><strong className="font-medium text-gray-600">Idade:</strong> {pet.age} {pet.age === 1 ? 'ano' : 'anos'}</div>}
+                   {/* Removed Weight */}
+                   {/* Removed Color */}
+                   <div><strong className="font-medium text-gray-600">Porte:</strong> {pet.size}</div>
+                   <div><strong className="font-medium text-gray-600">Sexo:</strong> {pet.gender}</div>
+                   <div className="sm:col-span-2"><strong className="font-medium text-gray-600">Status:</strong> {pet.status}</div>
+                   {/* Add other relevant fields like Health, Temperament if available in Pet type */}
+                   {/* Example: */}
+                   {/* <div className="sm:col-span-2"><strong className="font-medium text-gray-600">Saúde:</strong> Vacinado, vermifugado</div> */}
+                   {/* <div className="sm:col-span-2"><strong className="font-medium text-gray-600">Temperamento:</strong> Alegre, brincalhão</div> */}
+                 </div>
+               </div>
             </div>
           </div>
         </div>

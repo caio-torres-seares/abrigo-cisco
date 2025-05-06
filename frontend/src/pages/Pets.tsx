@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Dog, Cat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
@@ -72,7 +72,7 @@ const Pets = () => {
     <div className="min-h-screen flex flex-col">
       <main className="flex-grow px-4 md:px-8 py-8 max-w-7xl mx-auto w-full">
         <div className="mb-8 md:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Procurar <br />um Amigo</h1>
+          <h1 className="text-primary-text text-3xl md:text-4xl font-bold mb-1">Procurar <br />um Amigo</h1>
           
           <div className="mt-6 flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
@@ -84,23 +84,31 @@ const Pets = () => {
               />
               <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground h-5 w-5" />
             </div>
-            
-            <div className="flex gap-2 items-center">
-              <ToggleGroup type="single" value={animalType} onValueChange={setAnimalType}>
-                <ToggleGroupItem value="todos" className="px-4 py-2 rounded-full bg-secondary">
-                  Todos
-                </ToggleGroupItem>
-                <ToggleGroupItem value="gato" className="px-4 py-2 rounded-full bg-secondary">
-                  Gato
-                </ToggleGroupItem>
-                <ToggleGroupItem value="cachorro" className="px-4 py-2 rounded-full bg-secondary">
-                  Cão
-                </ToggleGroupItem>
-              </ToggleGroup>
-              <Button variant="outline" className="ml-2 whitespace-nowrap">
-                Outros filtros
-              </Button>
-            </div>
+            <div className="flex gap-2">
+            <Button 
+              variant={animalType === 'todos' ? "default" : "outline"} 
+              onClick={() => setAnimalType('todos')}
+              className="rounded-full"
+            >
+              Todos
+            </Button>
+            <Button 
+              variant={animalType === 'cachorro' ? "default" : "outline"} 
+              onClick={() => setAnimalType('cachorro')}
+              className="rounded-full flex items-center gap-1"
+            >
+              <Dog size={16} />
+              Cães
+            </Button>
+            <Button 
+              variant={animalType === 'gato' ? "default" : "outline"} 
+              onClick={() => setAnimalType('gato')}
+              className="rounded-full flex items-center gap-1"
+            >
+              <Cat size={16} />
+              Gatos
+            </Button>
+          </div>
           </div>
         </div>
 
