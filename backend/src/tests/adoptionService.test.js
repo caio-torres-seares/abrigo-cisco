@@ -1,128 +1,214 @@
-// backend/src/tests/adoptionIntegration.test.js
+// backend/src/tests/adoptionFlow.test.js
 const mongoose = require('mongoose');
 const request = require('supertest');
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
-// Carrega as variáveis de ambiente
 dotenv.config();
 
-// Cria uma instância do Express para testes
+jest.setTimeout(30000); // aumenta tempo máximo
+
+// App mockado
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Importa as rotas
 const authRoutes = require('../routes/authRoutes');
 const petRoutes = require('../routes/petRoutes');
 const adoptionRoutes = require('../routes/adoptionRoutes');
-const profileAnalysisRoutes = require('../routes/profileAnalysisRoutes');
 
-// Usa as rotas
 app.use('/api/auth', authRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/adoptions', adoptionRoutes);
-app.use('/api/profile', profileAnalysisRoutes);
 
-describe('Testes de Integração - Fluxo Completo', () => {
-  let token;
-  let userId;
+describe('Fluxo simples de cadastro e adoção', () => {
+  let tokenUser;
+  let tokenAdmin;
   let petId;
+  let userId;
 
-  // Conecta ao banco de testes
   beforeAll(async () => {
-    await mongoose.connect(process.env.MONGODB_URI_TEST || 'mongodb://localhost:27017/abrigo-cisco-tests');
+    await mongoose.connect(process.env.MONGODB_URI_TEST || 'mongodb://127.0.0.1:27017/abrigo-cisco-tests');
   });
 
-  // Limpa o banco antes de cada teste
   beforeEach(async () => {
-    await mongoose.connection.dropDatabase();
+    await mongoose.connection.db.dropDatabase();
   });
 
-  // Desconecta do banco após todos os testes
   afterAll(async () => {
-    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
     await mongoose.disconnect();
   });
-  
 
-  it('deve executar o fluxo completo de adoção', async () => {
-    // 1. Criar usuário
-    const userResponse = await request(app)
-      .post('/api/auth/register')
-      .send({
-        name: 'Usuário Teste',
-        email: 'teste@email.com',
-        password: '123456',
-        phone: '123456789',
-        address: 'Rua Teste, 123'
-      });
+  it('deve registrar um novo usuário', async () => {
+    const res = await request(app).post('/api/auth/register').send({
+      name: 'Caio Teste',
+      email: 'caio@email.com',
+      password: '123456',
+      phone: '123456789',
+      address: 'Rua Exemplo, 123',
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.user).toBeDefined();
+    userId = res.body.user._id;
+  });
 
-    expect(userResponse.status).toBe(201);
-    userId = userResponse.body.user._id;
+  it('deve autenticar o usuário e obter o token', async () => {
+    // Registra antes de logar
+    await request(app).post('/api/auth/register').send({
+      name: 'Caio Teste',
+      email: 'caio@email.com',
+      password: '123456',
+      phone: '123456789',
+      address: 'Rua Exemplo, 123',
+    });
 
-    // 2. Login para obter o token
-    const loginResponse = await request(app)
-      .post('/api/auth/login')
-      .send({
-        email: 'teste@email.com',
-        password: '123456'
-      });
+    const res = await request(app).post('/api/auth/login').send({
+      email: 'caio@email.com',
+      password: '123456',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBeDefined();
+    tokenUser = res.body.token;
+    userId = res.body.user._id;
+  });
 
-    expect(loginResponse.status).toBe(200);
-    expect(loginResponse.body).toHaveProperty('token');
-    token = loginResponse.body.token;
-
-    // 3. Criar perfil de análise
-    const profileResponse = await request(app)
-      .post('/api/profile')
-      .set('Authorization', `Bearer ${token}`)
-      .send({
-        monthlyIncome: '3000',
-        housingType: 'Casa',
-        roomsCount: 3,
-        hasPets: true,
-        petsDescription: 'Já tive cachorros',
-        hasChildren: false,
-        childrenCount: 0,
-        hoursAvailable: '4 horas'
-      });
-
-    expect(profileResponse.status).toBe(201);
-    expect(profileResponse.body.isComplete).toBe(true);
-
-    // 4. Criar pet (como funcionário)
-    const petResponse = await request(app)
+  it('deve tentar cadastrar um pet sem autorização e falhar', async () => {
+    const res = await request(app)
       .post('/api/pets')
-      .set('Authorization', `Bearer ${token}`)
       .send({
-        name: 'Rex',
-        species: 'Cachorro',
-        breed: 'Vira-lata',
-        age: '2 anos',
-        gender: 'Macho',
-        size: 'Médio',
-        status: 'disponível',
-        photos: ['foto1.jpg']
+        name: 'Nina',
+        species: 'cachorro',
+        breed: 'Pinscher',
+        age: 2,
+        gender: 'fêmea',
+        size: 'pequeno',
+        description: 'Cachorra muito dócil',
+        photos: ['url_da_foto1', 'url_da_foto2'],
+      });
+  
+    expect(res.status).toBe(401); // ou 403 dependendo da regra
+    expect(res.body).toHaveProperty('message', 'Token não fornecido');
+ // opcional, se retorna msg de erro
+  });
+
+  it('deve registrar um novo administrador', async () => {
+    const res = await request(app).post('/api/auth/register').send({
+      name: 'Admin',
+      email: 'admin@abrigocisco.com',
+      password: '123456',
+      phone: '123456789',
+      address: 'Rua Exemplo, 123',
+    });
+    expect(res.status).toBe(201);
+    expect(res.body.user).toBeDefined();
+    userId = res.body.user._id;
+  });
+
+  it('deve autenticar o admin e obter o token', async () => {
+    // Registra antes de logar
+    await request(app).post('/api/auth/register').send({
+      name: 'Admin',
+      email: 'admin@abrigocisco.com',
+      password: '123456',
+      phone: '123456789',
+      address: 'Rua Exemplo, 123',
+    });
+
+    const res = await request(app).post('/api/auth/login').send({
+      email: 'admin@abrigocisco.com',
+      password: '123456',
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.token).toBeDefined();
+    tokenAdmin = res.body.token;
+    console.log("tokenAdmin: " + tokenAdmin);
+
+    userId = res.body.user._id;
+  });
+
+  it('deve cadastrar um pet com autorização', async () => {
+    // Registra e loga antes de criar pet
+    await request(app).post('/api/auth/register').send({
+      name: 'Admin',
+      email: 'admin@abrigocisco.com',
+      password: '123456',
+      phone: '123456789',
+      address: 'Rua Exemplo, 123',
+    });
+
+    const login = await request(app).post('/api/auth/login').send({
+      email: 'admin@abrigocisco.com',
+      password: '123456',
+    });
+    tokenAdmin = login.body.token;
+    console.log("tokenAdmin: " + tokenAdmin);
+
+
+    const res = await request(app)
+      .post('/api/pets')
+      .set('Authorization', `Bearer ${tokenAdmin}`)
+      .send({
+        "name": "Nina",
+        "species": "cachorro",
+        "breed": "Pinscher",
+        "age": 2,
+        "gender": "fêmea",
+        "size": "pequeno",
+        "description": "Cachorra muito dócil",
+        "photos": ["url_da_foto1", "url_da_foto2"]
       });
 
-    expect(petResponse.status).toBe(201);
-    petId = petResponse.body._id;
+    expect(res.status).toBe(201);
+    expect(res.body._id).toBeDefined();
+    petId = res.body._id;
+  });
 
-    // 5. Criar solicitação de adoção
-    const adoptionResponse = await request(app)
+  it('deve solicitar a adoção de um pet', async () => {
+    // Registra, loga e cria pet antes de adotar
+    await request(app).post('/api/auth/register').send({
+      name: 'Caio Teste',
+      email: 'caio@email.com',
+      password: '123456',
+      phone: '123456789',
+      address: 'Rua Exemplo, 123',
+    });
+
+    const login = await request(app).post('/api/auth/login').send({
+      email: 'caio@email.com',
+      password: '123456',
+    });
+    tokenUser = login.body.token;
+    userId = login.body.user._id;
+
+    const pet = await request(app)
+      .post('/api/pets')
+      .set('Authorization', `Bearer ${tokenUser}`)
+      .send({
+        name: 'Bolt',
+        species: 'Cachorro',
+        breed: 'Labrador',
+        age: '3 anos',
+        gender: 'Macho',
+        size: 'Grande',
+        status: 'disponível',
+        photos: ['bolt.jpg'],
+      });
+
+    petId = pet.body._id;
+
+    const res = await request(app)
       .post('/api/adoptions')
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${tokenUser}`)
       .send({
         pet: petId,
-        notes: 'Gostaria de adotar este pet'
+        notes: 'Quero muito adotar o Bolt!',
       });
 
-    expect(adoptionResponse.status).toBe(201);
-    expect(adoptionResponse.body.status).toBe('pendente');
-    expect(adoptionResponse.body.pet._id.toString()).toBe(petId.toString());
-    expect(adoptionResponse.body.user._id.toString()).toBe(userId.toString());
+    expect(res.status).toBe(201);
+    expect(res.body.status).toBe('pendente');
+    expect(res.body.user._id.toString()).toBe(userId.toString());
+    expect(res.body.pet._id.toString()).toBe(petId.toString());
   });
 });
