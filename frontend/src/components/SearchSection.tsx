@@ -1,8 +1,6 @@
 
 import React from 'react';
 import { Search, PawPrint, User, Heart } from 'lucide-react';
-import MaoCelularImg from '../assets/images/MãoCelularSemFundo.png'
-import PataImg from '../assets/images/pataSemFundo.png'
 
 const SearchSection = () => {
   return (
@@ -35,14 +33,7 @@ const SearchSection = () => {
         </div>
       </div>
       
-      {/* Hand-drawn illustration */}
-      <div className="absolute right-0 bottom-0 opacity-40 md:opacity-70 pointer-events-none">
-        <img 
-          src={MaoCelularImg}
-          alt="Hand drawn pet illustration" 
-          className="w-32 md:w-48"
-        />
-      </div>
+      
     </section>
   );
 };
