@@ -77,7 +77,7 @@ const Pets = () => {
           <div className="mt-6 flex flex-col md:flex-row gap-4">
             <div className="relative flex-grow">
               <Input
-                placeholder="Pesquise por nome, raça, espécie"
+                placeholder="Pesquise por nome, raça"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-4 pr-10 py-2 rounded-full"
