@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, User, Settings, Heart, FileText } from 'lucide-react';
@@ -133,12 +132,13 @@ const Navbar = () => {
                   <User size={20} />
                   <span>{user?.name}</span>
                 </div>
-                <button 
+                <Link
+                  to="/"
                   onClick={handleLogout}
-                  className="text-left text-primary-text hover:opacity-80 transition py-2"
+                  className="block text-left text-primary-text hover:opacity-80 transition py-2"
                 >
                   Sair
-                </button>
+                </Link>
               </>
             ) : (
               <>
