@@ -1,0 +1,62 @@
+# Definir rede customizada
+networks:
+  app-network:
+
+volumes:
+  mongo-data:
+  redis-data: 
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: .docker/frontend/Dockerfile
+    command: npm run dev
+    ports:
+      - "80:80"
+      - "5173:5173"
+      - "8080:8080"
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: .docker/backend/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://root:example@mongo:27017/petfinder?authSource=admin
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - app-network
+
+  mongo:
+    container_name: mongo
+    image: mongo:5.0
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+    ports:
+      - "27018:27017"  
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
