@@ -7,17 +7,29 @@ volumes:
   redis-data: 
 
 services:
+  nginx:
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+    ports:
+      - "8081:80"
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+
   frontend:
     build:
       context: .
       dockerfile: .docker/frontend/Dockerfile
     command: npm run dev
-    ports:
-      - "80:80"
-      - "5173:5173"
-      - "8080:8080"
+    # ports:
+      # - "80:80"
+      # - "5173:5173"
+      # - "8080:8080"
     environment:
-      - VITE_API_URL=http://localhost:3000
+      - VITE_API_URL=/api
     depends_on:
       - backend
     networks:
